@@ -26,11 +26,11 @@ exports.getUserList = async (req, res) => {
   }
 };
 
-// Update a user by ID
+// Update a user by studentID
 exports.updateUser = async (req, res) => {
   try {
-    const { id } = req.params;
-    const updatedUser = await UserList.findByIdAndUpdate(id, req.body, {
+    const { studentID } = req.params;
+    const updatedUser = await UserList.findByIdAndUpdate(studentID, req.body, {
       new: true,
     });
     res.json(updatedUser);
@@ -39,11 +39,11 @@ exports.updateUser = async (req, res) => {
   }
 };
 
-// Delete a user by ID
+// Delete a user by studentID
 exports.deleteUser = async (req, res) => {
   try {
-    const { id } = req.params;
-    await UserList.findByIdAndDelete(id);
+    const { studentID } = req.params;
+    await UserList.findByIdAndDelete(studentID);
     await Dashboard.updateOne(
       {},
       { $inc: { totalMembers: -1 } },

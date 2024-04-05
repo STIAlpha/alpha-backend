@@ -9,9 +9,9 @@ router.get('/totals', dashboardController.getTotals);
 router.get('/user-list/:sortBy', dashboardController.getUserList);
 
 // Update a user by ID
-router.put('/user-list/:id', dashboardController.updateUser);
+router.put('/user-list/:studentID', dashboardController.updateUser);
 
 // Delete a user by ID
-router.delete('/user-list/:id', dashboardController.deleteUser);
+router.delete('/user-list/:studentID', dashboardController.deleteUser);
 
 module.exports = router; // Export the router instance

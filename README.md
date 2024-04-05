@@ -20,7 +20,7 @@ npm install
 ```
 npm install -g nodemon
 ```
-4. under src , create a .env file
+4. under src folder , create a .env file
 
 5. go to our discord server and download the env file in important-notes channel
 

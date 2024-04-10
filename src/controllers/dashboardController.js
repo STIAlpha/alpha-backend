@@ -2,7 +2,7 @@ const UserList = require("../models/registrationModels");
 
 const mongoose = require("mongoose");
 
-// View all Users from UserLists (@Keith)
+// View all Users from UserLists 
 const viewAllUsers = async (req, res) => {
   try {
     const viewallUsers = await UserList.find({}).sort({ createdAt: -1 });

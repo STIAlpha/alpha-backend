@@ -7,7 +7,6 @@ const {
     updateUser
    } = require('../controllers/dashboardController')
    
-//GET (for @ Keith Pascual)
 // Get All Users from document
 router.get('/all-users',viewAllUsers);
 

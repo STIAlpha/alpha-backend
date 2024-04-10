@@ -3,9 +3,10 @@ const UserList = require('../models/registrationModels');
 const mongoose = require('mongoose');
 
 // View all Users from UserLists (@Keith)
-const viewallUsers = async (req, res) => {
+const viewAllUsers = async (req, res) => {
   try {
-    // insert codes here
+    const viewallUsers = await UserList.find({}).sort({createdAt: -1})
+    res.status(200).json(viewallUsers)
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -54,5 +55,5 @@ module.exports = {
   viewUser,
   deleteUser,
   updateUser,
-  viewallUsers
+  viewAllUsers
 }

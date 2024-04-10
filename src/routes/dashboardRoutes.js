@@ -2,14 +2,14 @@ const express = require('express');
 const router = express.Router();
 const {
     viewUser,
-    viewallUsers,
+    viewAllUsers,
     deleteUser,
     updateUser
    } = require('../controllers/dashboardController')
    
 //GET (for @ Keith Pascual)
 // Get All Users from document
-router.get('/all-users',viewallUsers);
+router.get('/all-users',viewAllUsers);
 
 //SAMPLE
 // Get User from document

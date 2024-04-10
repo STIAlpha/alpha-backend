@@ -6,7 +6,7 @@ const userSchema = new mongoose.Schema({
   team: { type: String, required: true }, // User's team
   email: { type: String, required: true, unique: true }, // User's email address
   studentID: { type: String, required: true, unique: true }, // User's student ID
-  },{ id: false });
+  });
 
 // Export the model for the user schema
 module.exports = mongoose.model('UserList', userSchema);

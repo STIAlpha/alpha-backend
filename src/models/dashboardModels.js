@@ -1,5 +1,7 @@
 const mongoose = require('mongoose'); // Import mongoose library
 const { UserList } = require('./registrationModels'); // Import the UserList model from registrationModels
+// ignore this file (irrelevat atm)
+
 
 // Define a schema for the totals of various dashboard metrics
 const totalsSchema = new mongoose.Schema({

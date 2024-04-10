@@ -1,17 +1,26 @@
-const express = require('express'); // Import express library
-const router = express.Router(); // Create a new router instance
-const dashboardController = require('../controllers/dashboardController'); // Import dashboard controller
+const express = require('express');
+const router = express.Router();
+const {
+    viewUser,
+    viewallUsers,
+    deleteUser,
+    updateUser
+   } = require('../controllers/dashboardController')
+   
+//GET (for @ Keith Pascual)
+// Get All Users from document
+router.get('/all-users',viewallUsers);
 
-// Get total number of users, posts, and comments
-router.get('/totals', dashboardController.getTotals);
+//SAMPLE
+// Get User from document
+router.get('/user/:id', viewUser);
 
-// Get list of users sorted by specified field
-router.get('/user-list/:sortBy', dashboardController.getUserList);
-
+// PUT (For @ Neil Abadilla)
 // Update a user by ID
-router.put('/user-list/:studentID', dashboardController.updateUser);
+router.put('/user/:id', updateUser);
 
+// DELETE (for @Ed Hibaler )
 // Delete a user by ID
-router.delete('/user-list/:studentID', dashboardController.deleteUser);
+router.delete('/user/:id', deleteUser);
 
-module.exports = router; // Export the router instance
+module.exports = router;

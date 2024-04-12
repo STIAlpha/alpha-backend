@@ -10,17 +10,17 @@ How to use
 3. open a new terminal and run the ff
 
 ```
-cd src
-```
-
-```
 npm install
 ```
-3. run this npm command after finishing the 2 commands
 ```
 npm install -g nodemon
 ```
-4. under src folder , create a .env file
+```
+cd serverside
+```
+3. run this npm command after finishing the 2 commands
+
+4. under serverside folder , create a .env file
 
 5. go to our discord server and download the env file in important-notes channel
 

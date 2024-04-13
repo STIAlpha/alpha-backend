@@ -35,6 +35,43 @@ const viewUser = async (req, res) => {
 // Update a user by objectID @ Neil
 const updateUser = async (req, res) => {
   try {
+
+    
+    const {name,team,email, studentID}=req.body
+
+    if(!studentID)
+    {
+        return res.status(400).json({message:'student ID needed'})
+    }
+
+    const user = await UserList.findOne({ studentID: studentID }).exec()
+
+    if(!user)
+    {
+        return res.status(400).json({message:'Student not Found'})
+    }
+
+    /*
+    const duplicate_email = await User.findOne({email}).lean.exec()
+
+    if(duplicate_email & duplicate_email?._studentID.toString() !==studentID)
+    {
+        return res.status(409).json({message: 'Duplicate email'})
+    }
+    */
+    if (name)
+      user.name =name
+    if (email)
+      user.email=email
+    user.studentID = studentID
+    if (team)
+      user.team=team
+    
+
+    const updateUser = await user.save()
+
+    res.json({message: `${studentID} updated` })
+    /*
     const { id } = req.params;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -52,6 +89,8 @@ const updateUser = async (req, res) => {
     if (!user) {
       return res.status(400).json({ error: "No such user" });
     }
+
+    */
   } catch (error) {
     res.status(400).json({ message: error.message });
   }

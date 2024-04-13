@@ -20,8 +20,8 @@ db.once('open', () => { // Log when connection is successful
   console.log('Connected to the database');
 });
 
-const registrationRoutes = require('./routes/registrationRoutes'); // Import registration routes
-const dashboardRoutes = require('./routes/dashboardRoutes'); // Import dashboard routes
+const registrationRoutes = require('./serverside/routes/registrationRoutes'); // Import registration routes
+const dashboardRoutes = require('./serverside/routes/dashboardRoutes'); // Import dashboard routes
 
 app.use('/api/register', registrationRoutes); // Use registration routes
 app.use('/api/dashboard', dashboardRoutes); // Use dashboard routes

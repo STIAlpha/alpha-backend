@@ -60,9 +60,10 @@ const updateUser = async (req, res) => {
 // Delete a user by objectID @Ed
 const deleteUser = async (req, res) => {
   try {
-    // insert codes here
+    await UserList.findByIdAndDelete(req.params.id);
+    res.json({ message: 'User List deleted' });
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    res.status(500).json({ message: error.message });
   }
 };
 

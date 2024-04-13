@@ -74,7 +74,7 @@ const deleteUser = async (req, res) => {
 
     const result=await user.deleteOne()
 
-    const reply = `Username ${result.name} with ID ${result.studentID} deleted`
+    const reply = `User with ID ${studentID} deleted`
 
     res.json(reply)
     //await UserList.findByIdAndDelete(req.params.id);

@@ -1,5 +1,15 @@
 const express = require('express');
 const router = express.Router();
+
+const usersController = require('../controllers/dashboardController')
+router.route('/')
+.get(usersController.viewAllUsers)
+.get(usersController.viewUser)
+.patch(usersController.updateUser)
+.delete(usersController.deleteUser)
+
+
+/*
 const {
     viewUser,
     viewAllUsers,
@@ -22,4 +32,6 @@ router.put('/user/:id', updateUser);
 // Delete a user by ID
 router.delete('/user/:id', deleteUser);
 
+
+*/
 module.exports = router;

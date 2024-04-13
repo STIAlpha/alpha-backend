@@ -60,8 +60,25 @@ const updateUser = async (req, res) => {
 // Delete a user by objectID @Ed
 const deleteUser = async (req, res) => {
   try {
-    await UserList.findByIdAndDelete(req.params.id);
-    res.json({ message: 'User List deleted' });
+    const {studentID}= req.body
+    if(!studentID)
+    {
+        return res.status(400).json({message:'Student ID Required'})
+    }
+    const user = await UserList.findOne({ studentID: studentID }).exec();
+
+
+    if (!user){
+        return res.status(400).json({message:'Student not found'})
+    }
+
+    const result=await user.deleteOne()
+
+    const reply = `Username ${result.name} with ID ${result.studentID} deleted`
+
+    res.json(reply)
+    //await UserList.findByIdAndDelete(req.params.id);
+    //res.json({ message: 'User List deleted' });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

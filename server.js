@@ -9,7 +9,7 @@ const app = express(); // Create an instance of express
 app.use(express.json()); // Use express json middleware
 app.use(cors()); // Use cors middleware
 
-mongoose.connect(process.env.MONGO_URI, { // Connect to MongoDB
+mongoose.connect(process.env.MONGO_URI, { // Connect to MongoDB 
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });

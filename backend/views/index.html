@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+ <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css" rel="stylesheet" > 
+  <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v6.4.2/css/all.css">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>View Events</title>
+  <style>
+    body {
+        background-color: #211d1d;
+        scroll-behavior: auto;
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+    th, td {
+      border: 1px solid #f0e4e4;
+      text-align: left;
+      color: white;
+      padding: 8px;
+    }
+    th {
+      background-color: #070432;
+    }
+    h2 {
+        color: white;
+        text-align: center;
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+    .header {
+      text-align: end;
+      padding-top: 10px;
+      padding-right: 5px;
+      padding-bottom: 50px;
+
+    }
+   .logoutBtn {
+    padding-bottom: 10px;
+    padding-right: 5px;
+    text-align: end;
+   }
+
+  </style>
+</head>
+<body>
+
+  <h2>Events</h2>
+  
+  <div class="logoutBtn">
+  <i onclick="logoutAndRedirect()"style="cursor: pointer;"class="fa-solid fa-right-from-bracket btn btn-danger fa-2x"></i>
+</div>
+  <div id="alertContainer"></div>
+  <table id="eventsTable">
+    <thead>
+      <tr>
+        <th>Thumbnail</th>
+        <th>Title</th>
+        <th>Description</th>
+        <th>RTF Content</th>
+        <th>Event End Date</th>
+        <th>Event Availability</th>
+        <th>Operation</th>
+      
+      </tr>
+    </thead>
+    <tbody id="eventsBody">
+      <!-- Event data will be inserted here -->
+    </tbody>
+  </table>
+  <div class="header">
+    <i class="fa-solid fa-square-plus btn btn-primary fa-2x" data-bs-toggle="modal" data-bs-target="#createEventModal"></i>
+  </div>
+  <script>
+
+const showAlert =  (message, type) => {
+  const alertContainer = document.getElementById('alertContainer');
+  const alertElement = `
+    <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+      ${message}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  `;
+  alertContainer.innerHTML = alertElement;
+};
+    
+    // Function to delete an event
+    const deleteEvent = async (eventId) => {
+      try {
+        const accessToken = localStorage.getItem('accessToken'); // Retrieve access token
+
+        const response = await fetch(`/events/`, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${accessToken}`
+          },
+          body: JSON.stringify({ id: eventId })
+        });
+        if (response.ok) {
+          // Refresh the events table after deletion
+          showAlert("Event deleted.", "success");
+          fetchEvents();
+        } else if (response.status === 401 || response.status === 403) {
+          // Show unauthorized alert
+          showAlert("You don't have permission to delete this event.", "danger");
+        }else {
+          console.error('Failed to delete event');
+        }
+      } catch (error) {
+        console.error('Error deleting event:', error);
+      }
+    };
+
+    const openUpdateModal = (eventId, title, description, rtfContent, eventEndDate, eventJoinable) => {
+      
+    const accessToken = localStorage.getItem('accessToken');
+    const decodedToken = decodeToken(accessToken); // Assuming you have a function to decode the token
+    if (!accessToken) {
+    showAlert("You don't have permission to update events.", "danger");
+    return;
+  }
+      document.getElementById('updateEventId').value = eventId;
+      document.getElementById('updateTitle').value = title;
+      document.getElementById('updateDescription').value = description;
+      document.getElementById('updateRTFContent').value = rtfContent;
+      const eventEndDateDatePart = eventEndDate.split('T')[0];
+    document.getElementById('updateEventEndDate').value = eventEndDateDatePart;
+      const updateEventJoinableCheckbox = document.getElementById('updateEventJoinable');
+      updateEventJoinableCheckbox.checked = eventJoinable === 'true'; // Assuming eventJoinable is a string
+    document.getElementById('updateEventJoinableHidden').value = eventJoinable; // Set hidden input value
+
+      const updateModal = new bootstrap.Modal(document.getElementById('updateEventModal'));
+      updateModal.show();
+    };
+   
+    const handleUpdateEventSubmit = async () => {
+  const form = document.getElementById('updateEventForm');
+  const eventId = form.querySelector('#updateEventId').value; // Get event ID from the form
+
+  const formData = new FormData(form);
+  formData.append('id', eventId); // Append event ID to the form data
+
+  try {
+    const accessToken = localStorage.getItem('accessToken'); // Retrieve access token
+
+    const response = await fetch(`/events/`, {
+      method: 'PATCH',
+      headers: {
+        'Authorization': `Bearer ${accessToken}` // Include access token in headers
+      },
+      body: formData
+    });
+
+    if (response.ok) {
+      // Close the modal after successful update
+      const updateModal = bootstrap.Modal.getInstance(document.getElementById('updateEventModal'));
+      updateModal.hide();
+    
+      
+      // Refresh the page after update
+      window.location.reload();
+      showAlert("Event updated.", "success");
+    } else if (response.status === 401 || response.status === 403) {
+          // Show unauthorized alert
+          showAlert("You don't have permission to update this event.", "danger");
+        }
+        else {
+      console.error('Failed to update event');
+    }
+  } catch (error) {
+    console.error('Error updating event:', error);
+  }
+};
+
+
+
+const handleCreateEventSubmit = async () => {
+    const form = document.getElementById('createEventForm');
+    const formData = new FormData(form);
+
+    try {
+      const accessToken = localStorage.getItem('accessToken'); // Retrieve access token
+
+      const response = await fetch('/events', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${accessToken}`
+        },
+        body: formData
+      });
+
+      if (response.ok) {
+        // Close the modal after successful creation
+        const createModal = bootstrap.Modal.getInstance(document.getElementById('createEventModal'));
+        createModal.hide();
+        showAlert("Event created.", "success");
+        
+        // Refresh the events table after creation
+        fetchEvents();
+      } else if (response.status === 401 || response.status === 403) {
+        // Show unauthorized alert
+        showAlert("You don't have permission to create an event.", "danger");
+      } else {
+        console.error('Failed to create event');
+        
+      }
+    } catch (error) {
+      console.error('Error creating event:', error);
+    }
+  };
+
+
+    
+
+    
+
+    // Function to fetch events data from backend
+    const fetchEvents = async () => {
+    try {
+        const accessToken = localStorage.getItem('accessToken'); // Retrieve access token
+
+        const response = await fetch('/events', {
+            headers: {
+                'Authorization': `Bearer ${accessToken}` // Include access token in headers
+            }
+        });
+
+        if (response.ok) {
+            const events = await response.json();
+            const eventsBody = document.getElementById('eventsBody');
+            eventsBody.innerHTML = ''; // Clear existing data
+            events.forEach(event => {
+
+               // Parse eventEndDate and extract year, month, and day
+               const endDate = new Date(event.eventEndDate);
+                const year = endDate.getFullYear();
+                const month = endDate.getMonth() + 1; // Months are zero indexed, so add 1
+                const day = endDate.getDate();
+
+                // Construct the formatted date string
+                const formattedEndDate = `${year}-${month}-${day}`;
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                <td><img src="data:${event.thumbnail.contentType};base64,${event.thumbnail.data}" alt="Thumbnail" style="max-width: 150px;"></td>
+                    <td>${event.title}</td>
+                    <td>${event.description}</td>
+                    <td>${event.rtfContent}</td>
+                    <td>${formattedEndDate}</td>
+                    <td>
+                      ${event.eventJoinable ? '<button class="btn btn-success" onclick="joinEvent(\'' + event._id + '\')">Join</button>' : 'Event unavailable'}
+                    </td>
+                    <td><i class="fa-solid fa-trash btn btn-danger fa-1x" style="cursor: pointer;" onclick="deleteEvent('${event._id}')"></i>
+                      <i class="fa-solid fa-pen-to-square btn btn-primary" style="cursor: pointer;" onclick="openUpdateModal('${event._id}', '${event.title}', '${event.description}', '${event.rtfContent}', '${event.eventEndDate}', '${event.eventJoinable}')"></i></td>
+                `;
+                eventsBody.appendChild(row);
+            });
+        } else {
+            if (response.status === 400) {
+                // Clear events table since no events are available
+                document.getElementById('eventsBody').innerHTML = '';
+            } else {
+                console.error('Failed to fetch events:', response.statusText);
+            }
+        }
+    } catch (error) {
+        console.error('Error fetching events:', error);
+    }
+};
+   
+
+    // Initial fetch of events
+    fetchEvents();
+    
+    const decodeToken = (token) => {
+    try {
+        const payload = token.split('.')[1];
+        return JSON.parse(atob(payload));
+    } catch (error) {
+        console.error('Error decoding token:', error);
+        return {};
+    }
+};
+
+document.addEventListener('DOMContentLoaded', function() {
+    const createEventForm = document.getElementById('createEventForm');
+    const createEventJoinableCheckbox = document.getElementById('createEventJoinable');
+    const createEventJoinableHiddenInput = document.getElementById('createEventJoinableHidden');
+    
+
+    createEventForm.addEventListener('submit', function(event) {
+        event.preventDefault(); // Prevent default form submission
+        handleCreateEventSubmit(); // Call function to handle form submission
+    });
+
+    createEventJoinableCheckbox.addEventListener('change', function() {
+        // Set the value of the checkbox to true or false based on its checked state
+        createEventJoinableHiddenInput.value = this.checked ? 'true' : 'false';
+      
+    });
+});
+
+
+
+
+
+
+    document.addEventListener('DOMContentLoaded', function() {
+    // Your code here
+    const updateEventForm = document.getElementById('updateEventForm');
+    updateEventForm.addEventListener('submit', function(event) {
+        event.preventDefault(); // Prevent default form submission
+        handleUpdateEventSubmit(); // Call your submit function
+    });
+
+    const updateEventJoinableCheckbox = document.getElementById('updateEventJoinable');
+    const updateEventJoinableHiddenInput = document.getElementById('updateEventJoinableHidden');
+
+     // Update the hidden input value when the checkbox is changed
+     updateEventJoinableCheckbox.addEventListener('change', function() {
+        if (this.checked) {
+            updateEventJoinableHiddenInput.value = 'true';
+        } else {
+            updateEventJoinableHiddenInput.value = 'false';
+        }
+    });
+
+
+    const decodeToken = (token) => {
+  try {
+    const payload = token.split('.')[1];
+    return JSON.parse(atob(payload));
+  } catch (error) {
+    console.error('Error decoding token:', error);
+    return {};
+  }
+};
+});
+
+function logoutAndRedirect() {
+        // Clear the access token from local storage
+        localStorage.removeItem('accessToken');
+        
+        // Redirect to the /auth page
+        window.location.href = '/auth';
+    }
+
+
+
+    
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+  <!-- Update Event Modal -->
+  <!-- Update Event Modal -->
+<div class="modal fade" id="updateEventModal" tabindex="-1" aria-labelledby="updateEventModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title" id="updateEventModalLabel">Update Event</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+              <form id="updateEventForm" enctype="multipart/form-data">
+                  <input type="hidden" id="updateEventId" name="eventId">
+                  <div class="mb-3">
+                      <label for="updateThumbnail" class="form-label">Thumbnail</label>
+                      <input type="file" class="form-control" id="updateThumbnail" name="thumbnail" accept="image/jpeg, image/png">
+                  </div>
+                  <div class="mb-3">
+                      <label for="updateTitle" class="form-label">Title</label>
+                      <input type="text" class="form-control" id="updateTitle" name="title" required>
+                  </div>
+                  <div class="mb-3">
+                      <label for="updateDescription" class="form-label">Description</label>
+                      <textarea class="form-control" id="updateDescription" name="description" required></textarea>
+                  </div>
+                  <div class="mb-3">
+                      <label for="updateRTFContent" class="form-label">RTF Content</label>
+                      <textarea class="form-control" id="updateRTFContent" name="rtfContent" required></textarea>
+                  </div>
+                  <div class="mb-3 form-check">
+                      <!-- Hidden input field to maintain unchecked state -->
+                      <input type="hidden" id="updateEventJoinableHidden" name="eventJoinable" value="false">
+                      <input type="checkbox" class="form-check-input" id="updateEventJoinable" name="eventJoinable" onchange="this.nextElementSibling.value = this.checked ? 'true' : 'false'">
+                      <label class="form-check-label" for="updateEventJoinable">Joinable Event</label>
+                  </div>
+                  <div class="mb-3">
+                      <label for="updateEventEndDate" class="form-label">Event End Date</label>
+                      <input type="date" class="form-control" id="updateEventEndDate" name="eventEndDate">
+                  </div>
+                  <div class="modal-footer">
+                      <button type="submit" class="btn btn-primary">Save changes</button>
+                  </div>
+              </form>
+          </div>
+      </div>
+  </div>
+</div>
+
+
+
+
+ <!-- Create Event Modal -->
+<div class="modal fade" id="createEventModal" tabindex="-1" aria-labelledby="createEventModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title" id="createEventModalLabel">Create Event</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+              <form id="createEventForm" enctype="multipart/form-data">
+                  <div class="mb-3">
+                      <label for="createThumbnail" class="form-label">Thumbnail</label>
+                      <input type="file" class="form-control" id="createThumbnail" name="thumbnail" accept="image/jpeg, image/png" required>
+                  </div>
+                  <div class="mb-3">
+                      <label for="createTitle" class="form-label">Title</label>
+                      <input type="text" class="form-control" id="createTitle" name="title" required>
+                  </div>
+                  <div class="mb-3">
+                      <label for="createDescription" class="form-label">Description</label>
+                      <textarea class="form-control" id="createDescription" name="description" required></textarea>
+                  </div>
+                  <div class="mb-3">
+                      <label for="createRTFContent" class="form-label">RTF Content</label>
+                      <textarea class="form-control" id="createRTFContent" name="rtfContent" required></textarea>
+                  </div>
+                  <div class="mb-3 form-check">
+                     <!-- Hidden input field to maintain unchecked state -->
+                     <input type="hidden" id="createEventJoinableHidden" name="eventJoinable" value="false">
+                    <input type="checkbox" class="form-check-input" id="createEventJoinable" name="eventJoinable"  onchange="this.nextElementSibling.value = this.checked ? 'true' : 'false'">
+                    <label class="form-check-label" for="createEventJoinable">Joinable Event</label>
+                   
+                </div>
+                  <div class="mb-3">
+                      <label for="createEventEndDate" class="form-label">Event End Date</label>
+                      <input type="date" class="form-control" id="createEventEndDate" name="eventEndDate" required>
+                  </div>
+                  <div class="modal-footer">
+                      <button type="submit" class="btn btn-primary">Create Event</button>
+                  </div>
+              </form>
+          </div>
+      </div>
+  </div>
+</div>
+
+
+
+
+</body>
+</html>

@@ -38,7 +38,8 @@ app.use('/uploads', express.static('uploads'))
 app.use('/', require('./routes/root'))
 app.use('/users', require('./routes/userRoutes'))
 app.use('/auth', require('./routes/authRoutes'))
-
+app.use('/members', require('./routes/membersRoutes'))
+app.use('/attendance', require('./routes/attendanceRoutes'))
 app.use('/events', require('./routes/eventRoutes'))
 app.use('/notes', require('./routes/noteRoutes'))
 

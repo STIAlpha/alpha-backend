@@ -10,9 +10,7 @@ const attendanceSchema = new mongoose.Schema({
 
     dateRegistered: {
 
-        type: Date,
-        default: Date.now
-
+        type: String
     }
     
 

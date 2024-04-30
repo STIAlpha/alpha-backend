@@ -8,8 +8,9 @@ const verifyRoles = require('../middleware/verifyRoles')
 const imageProcessing = require('../utils/imageProcessing')
 
 // router.use(verifyJWT)
-router.route('/')
-    .post(/*verifyRoles(ROLES_LIST.Admin), */ attendanceController.addToAttendance);
+router.route('/addattendance').post(/*verifyRoles(ROLES_LIST.Admin), */ attendanceController.addToAttendance);
+    router.route('/checkattendance').get(attendanceController.CheckAttendance);
+    router.route('/getAllAttendance').get(attendanceController.getAllAttendance);
 
     
 module.exports = router;

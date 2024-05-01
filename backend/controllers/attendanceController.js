@@ -25,7 +25,12 @@ class AttendanceController {
         }
         const student_email_with_domain = `${student_email}@ortigas-cainta.sti.edu.ph`;
 
-
+        const validStudentEmail = await Members.findOne({ student_email:student_email_with_domain }).lean().exec();
+    
+        if (!validStudentEmail) {
+            return res.status(400).json({ message: 'Not a valid student email' });
+        }
+    
         const duplicate = await Attendance.findOne({student_email:student_email_with_domain, dateRegistered: newPaddedDate }).lean().exec()
 
         if(duplicate) {

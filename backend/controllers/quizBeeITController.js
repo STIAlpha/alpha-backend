@@ -11,7 +11,7 @@ class ITquizbeeController {
       return res.status(400).json({ message: 'All fields required' });
     }
 
-    const validStudentEmail = await Members.findOne({STIstudentEmail}).lean().exec()
+    const validStudentEmail = await Members.findOne({student_email:STIstudentEmail}).lean().exec()
 
     if(!validStudentEmail) {
         
@@ -51,9 +51,9 @@ class ITquizbeeController {
 
     static getITquizbeeEntryByName = asyncHandler(async (req, res) => {
 
-        const studentName = req.params.Name;
+        const {Name} = req.body;
 
-        if(!studentName) {
+        if(!Name) {
             return res.status(400).json({message: 'Enter a student name.'});
         }
 

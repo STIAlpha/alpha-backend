@@ -7,7 +7,7 @@ router.route('/')
     .post( ITQuizBeeController.registerToITquizbeeEvent)
 
 
-router.route('/:studentName')
+router.route('/studentName')
     .get( ITQuizBeeController.getITquizbeeEntryByName)
     
 module.exports = router;

@@ -5,16 +5,12 @@ const ITquizBeeSchema = new mongoose.Schema({
       type: String,
       required: true
   },
-  YearAndSection: [{
-    Year: {
+  YearAndSection: {
+
       type: String,
       required: true
-    },
-    Section: {
-      type: String,
-      required: true
-    }
-  }],
+    
+  },
   STIstudentEmail: {
     type: String,
     required: true

@@ -44,7 +44,7 @@ class CSquizbeeController {
 
         // If no users 
         if (!CSquizbeeEntries) {
-            return res.status(400).json({ message: 'CSquizbeefound' })
+            return res.status(400).json({ message: 'No Entries Found' })
         }
 
         res.json(CSquizbeeEntries);

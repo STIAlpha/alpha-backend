@@ -4,21 +4,24 @@ const WebDevEntry = require('../models/WebDevEntry');
 class WebDevController {
     // CREATE
     static registerToWebDevEvent = asyncHandler(async (req, res) => {
-        const { teamName, participantNames, yearAndSection, teamRepEmail, githubProfiles, agreement } = req.body;
+        const { teamName, members, teamRepEmail } = req.body;
 
-        if (!teamName || !participantNames || !yearAndSection || !teamRepEmail || !githubProfiles || agreement === undefined) {
+        if (!teamName || !members || !teamRepEmail) {
             return res.status(400).json({ message: 'All fields required' });
         }
 
+        const membersArray = members.map(member => ({
+            Name: member.Name,
+            coursesAndSections: member.coursesAndSections,
+            githubProfiles: member.githubProfiles
+        }));
+    
         const webDevEntryObject = {
             teamName,
-            participantNames,
-            yearAndSection,
-            teamRepEmail,
-            githubProfiles,
-            agreement
+            members: membersArray,
+            teamRepEmail 
         };
-
+    
         const webDevEntry = await WebDevEntry.create(webDevEntryObject);
 
         if (webDevEntry) {

@@ -1,6 +1,6 @@
 const asyncHandler = require('express-async-handler')
 const Members = require('../models/Members');
-const ITQuizbee = require('../models/QuizBeeIT');
+const qb = require('../models/QuizBeeIT');
 
 class ITquizbeeController {
     // CREATE
@@ -18,7 +18,7 @@ class ITquizbeeController {
         return res.status(400).json({message: 'Not a valid student email'})
     }
 
-    const duplicate = await ITQuizbee.findOne({ Name }).lean().exec();
+    const duplicate = await qb.findOne({ Name }).lean().exec();
 
     if(duplicate) {
         return res.status(409).json({message: 'Student already registered.'});
@@ -27,7 +27,7 @@ class ITquizbeeController {
     const ITquizbeeEntryObject = { Name, YearAndSection, STIstudentEmail}
 
      // Create and store new chess entry
-     const ITquizbeeEntry = await ITQuizbee.create(ITquizbeeEntryObject)
+     const ITquizbeeEntry = await qb.create(ITquizbeeEntryObject)
 
      if(ITquizbeeEntry) {
         return res.status(200).json({message: 'Student has been successfully registered!'})
@@ -38,7 +38,7 @@ class ITquizbeeController {
 
   static getITquizbeeEntries = asyncHandler(async (req, res) => {
 
-    const ITquizbeeEntries = await ITQuizbee.find().lean()
+    const ITquizbeeEntries = await qb.find().lean()
 
     // If no users 
     if (!ITquizbeeEntries?.length) {
@@ -57,7 +57,7 @@ class ITquizbeeController {
             return res.status(400).json({message: 'Enter a student name.'});
         }
 
-        const student = await ITQuizbee.findOne({Name}).lean().exec()
+        const student = await qb.findOne({Name}).lean().exec()
 
         if(!student) {
             return res.status(400).json({message: 'No entry found'})

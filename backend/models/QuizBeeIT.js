@@ -1,4 +1,4 @@
-const { default: mongoose } = require("mongoose");
+const mongoose = require('mongoose');
 
 const ITquizBeeSchema = new mongoose.Schema({
   Name: {
@@ -22,4 +22,4 @@ const ITquizBeeSchema = new mongoose.Schema({
 })
 
 const ITQuizBee = mongoose.model('ITQuizBee', ITquizBeeSchema);
-exports.modules = ITQuizBee;
+module.exports =ITQuizBee;

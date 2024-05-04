@@ -7,13 +7,12 @@ const ROLES_LIST = require('../config/roles_list')
 const verifyRoles = require('../middleware/verifyRoles')
 const imageProcessing = require('../utils/imageProcessing')
 
-router.use(verifyJWT)
 router.route('/')
-    .get(verifyRoles(ROLES_LIST.Admin), ITQuizBeeController.getITquizbeeEntries)
-    .post(verifyRoles(ROLES_LIST.Admin), ITQuizBeeController.registerToITquizbeeEvent)
+    .get(ITQuizBeeController.getITquizbeeEntries)
+    .post( ITQuizBeeController.registerToITquizbeeEvent)
 
 
 router.route('/:studentName')
-    .get(verifyRoles(ROLES_LIST.Admin), ITQuizBeeController.getITquizbeeEntryByName)
+    .get( ITQuizBeeController.getITquizbeeEntryByName)
     
 module.exports = router;

@@ -18,4 +18,4 @@ const CSquizBeeSchema = new mongoose.Schema({
 })
 
 const CSQuizBee = mongoose.model('CSQuizBee', CSquizBeeSchema);
-exports.module = CSQuizBee;
+module.exports = CSQuizBee;

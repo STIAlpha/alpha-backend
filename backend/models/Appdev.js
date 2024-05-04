@@ -1,9 +1,10 @@
 const mongoose = require("mongoose");
 
 // Define the application development event schema
+
 const appDevSchema = new mongoose.Schema({
   teamName: { type: String, required: true },
-  memberNames: { type: String, required: true }, // Members' names are stored in a single string, separated by commas
+  members: { type: [String], required: true }, // Members' names are stored in a single string, separated by commas
   description: { type: String, required: true }, // Brief description of the application concept
   agreement: {
     type: Boolean,

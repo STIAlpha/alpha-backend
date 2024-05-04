@@ -1,5 +1,9 @@
 const mongoose = require('mongoose')
 
+const Student= new mongoose.Schema({
+  Name: { type: String, required: true },
+  coursesAndSections: { type: String, required: true },
+});
 
 // Define the event schema
 const ideathonSchema = new mongoose.Schema({
@@ -7,16 +11,7 @@ const ideathonSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    memberName: [{
-        lastName: { type: String, required: true },
-        firstName: { type: String, required: true },
-        middleInitial: { type: String },
-      }],
-    memberYearSection: [{
-        surName: { type: String, required: true },
-        year: { type: String, required: true },
-        section: { type: String },
-      }],
+    members: {type:[Student],required:true},
     teamRepresentativeEmailAddress: {
         type: String, 
         required: true

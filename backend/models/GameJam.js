@@ -1,11 +1,15 @@
 const mongoose = require("mongoose");
 
-// Define the game jam event schema
+const Student= new mongoose.Schema({
+  Name: { type: String, required: true },
+  coursesAndSections: { type: String, required: true },
+
+});
+
 const gameJamSchema = new mongoose.Schema({
   teamName: { type: String, required: true },
   teamRepEmail: { type: String, required: true },
-  memberNames: { type: String, required: true }, // Assuming storage as a single string of names separated by commas
-  programsAndSections: { type: String, required: true }, // Assuming storage as a single string of 'Surname_Section' separated by commas
+  members: { type: [Student], required: true }, 
   themeVote: {
     type: String,
     required: true,

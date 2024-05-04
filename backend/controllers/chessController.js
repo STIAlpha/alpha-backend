@@ -53,7 +53,7 @@ class ChessController {
 
     static getChessEntryByName = asyncHandler(async (req, res) => {
 
-        const studentName = req.params.studentName;
+        const {studentName} = req.body;
 
         if(!studentName) {
             return res.status(400).json({message: 'Enter a student name.'});

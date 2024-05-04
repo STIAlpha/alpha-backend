@@ -39,11 +39,16 @@ app.use('/', require('./routes/root'))
 app.use('/users', require('./routes/userRoutes'))
 app.use('/auth', require('./routes/authRoutes'))
 app.use('/members', require('./routes/membersRoutes'))
+app.use('/wildirft', require('./routes/wildriftRoutes'))
+app.use('./chess', require('./routes/chessRoutes'))
+app.use('./mlbb', require('./routes/mLBBRoutes'))
+app.use('./lol', require('./routes/lolRoutes'))
 app.use('/attendance', require('./routes/attendanceRoutes'))
 app.use('/ITQuizBee', require('./routes/ITquizbeeRoutes'))
 app.use('/CSQuizBee', require('./routes/CSquizbeeRoutes'))
 app.use('/events', require('./routes/eventRoutes'))
 app.use('/notes', require('./routes/noteRoutes'))
+
 
 
 app.all('*', (req, res) => {

@@ -17,13 +17,13 @@ class TekkenController {
       console.error(error);
       res.status(500).json({ message: 'Internal Server Error' });
     }
-  });
+  })
 
   // READ ALL
   static getTekkenEntries = asyncHandler(async (req, res) => {
     try {
       const tekkenEntries = await Tekken.find().lean();
-      if (!tekkenEntries.length) {
+      if (!tekkenEntries?.length) {
         return res.status(400).json({ message: "No entries found" });
       }
       res.json(tekkenEntries);
@@ -31,7 +31,9 @@ class TekkenController {
       console.error(error);
       res.status(500).json({ message: 'Internal Server Error' });
     }
-  });
+  })
+
+  
 
   // READ SINGLE
   static getSingleTekkenEntry = asyncHandler(async (req, res) => {
@@ -51,7 +53,7 @@ class TekkenController {
       console.error(error);
       res.status(500).json({ message: 'Internal Server Error' });
     }
-  });
+  })
 }
 
 module.exports = TekkenController;

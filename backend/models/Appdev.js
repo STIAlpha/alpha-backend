@@ -4,8 +4,9 @@ const mongoose = require("mongoose");
 
 const appDevSchema = new mongoose.Schema({
   teamName: { type: String, required: true },
-  members: { type: [String], required: true }, // Members' names are stored in a single string, separated by commas
+  members: [{ type: String }], // Members' names are stored in a single string, separated by commas
   description: { type: String, required: true }, // Brief description of the application concept
+  /*
   agreement: {
     type: Boolean,
     required: true,
@@ -16,6 +17,7 @@ const appDevSchema = new mongoose.Schema({
       message: "You must agree to the terms and conditions.",
     },
   },
+  */
 });
 
 // Create the model for the application development event

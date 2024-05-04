@@ -20,7 +20,7 @@ class ApplicationDevtController {
       return res.status(409).json({ message: "Team already registered." });
     }
 
-    const adEventObject = { teamName, memberNames, description };
+    const adEventObject = { teamName,members: memberNames, description };
 
     // Create and store new AD event entry
     const adEventEntry = await Appdev.create(adEventObject);
@@ -47,7 +47,7 @@ class ApplicationDevtController {
 
   // READ SINGLE
   static getADEntryByTeamName = asyncHandler(async (req, res) => {
-    const teamName = req.params.teamName;
+    const {teamName} = req.body;
 
     if (!teamName) {
       return res.status(400).json({ message: "Enter a team name." });

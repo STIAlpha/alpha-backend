@@ -1,10 +1,10 @@
-const mongoose = require('mongoose'); // <--- added
+const mongoose = require('mongoose'); 
 
 const tekkenSchema = new mongoose.Schema({
-  fullName: { type: String, required: true, trim: true },
-  yearAndSection: { type: String, required: true, trim: true },
-  stiEmailAddress: { type: String, required: true, trim: true, lowercase: true },
-  discordUsername: { type: String, required: true, trim: true }
+  fullName: { type: String, required: true},
+  yearAndSection: { type: String, required: true},
+  stiEmailAddress: { type: String, required: true},
+  discordUsername: { type: String, required: true}
 });
 
 const Tekken = mongoose.model('Tekken', tekkenSchema);

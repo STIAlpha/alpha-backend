@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 // Define the application development event schema
-const appDevEventSchema = new mongoose.Schema({
+const appDevSchema = new mongoose.Schema({
   teamName: { type: String, required: true },
   memberNames: { type: String, required: true }, // Members' names are stored in a single string, separated by commas
   description: { type: String, required: true }, // Brief description of the application concept
@@ -18,6 +18,6 @@ const appDevEventSchema = new mongoose.Schema({
 });
 
 // Create the model for the application development event
-const ADEvent = mongoose.model("ADEvent", appDevEventSchema);
+const ApplicationDev = mongoose.model("Application Development", appDevSchema);
 
-module.exports = ADEvent;
+module.exports = ApplicationDev;

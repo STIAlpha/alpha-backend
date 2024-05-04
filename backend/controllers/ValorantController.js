@@ -4,21 +4,21 @@ const Valorant = require('../models/Valorant');
 class ValorantController {
     // CREATE
     static registerToValorantEvent = asyncHandler(async (req, res) => {
-        const { teamName, fullNamesOfPlayers, programAndSection, stiEmailAddresses, discordUsernames, valorantIGNsAndTaglines, coachName } = req.body;
+        const { teamName, members } = req.body;
 
-        if (!teamName || !fullNamesOfPlayers || !programAndSection || !stiEmailAddresses || !discordUsernames || !valorantIGNsAndTaglines) {
+        if (!teamName || !members) {
             return res.status(400).json({ message: 'All fields except Coach Name are required.' });
+        }
+        
+        const valoteam = await Valorant.findOne({ teamName }).lean().exec();
+        if (valoteam) {
+            return res.status(404).json({ message: 'Team already registered' });
         }
 
         // Create and store new Valorant entry
         const valorantEntryObject = {
             teamName,
-            fullNamesOfPlayers,
-            programAndSection,
-            stiEmailAddresses,
-            discordUsernames,
-            valorantIGNsAndTaglines,
-            coachName,
+            members
         };
 
         const valorantEntry = await Valorant.create(valorantEntryObject);
@@ -43,7 +43,7 @@ class ValorantController {
 
     // READ SINGLE
     static getSingleValorantTeam = asyncHandler(async (req, res) => {
-        const teamName = req.params.teamName;
+        const {teamName} = req.body;
 
         if (!teamName) {
             return res.status(400).json({ message: 'Team name is required.' });

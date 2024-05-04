@@ -3,7 +3,7 @@ const Student= new mongoose.Schema({
     Name: { type: String, required: true },
     coursesAndSections: { type: String, required: true },
     email: { type: String, required: true },
-    discordusername: { type: Number, required: true },
+    discordusername: { type: String, required: true },
     ign: { type: String, required: true },
     coachname: { type: String, required: true },
 });

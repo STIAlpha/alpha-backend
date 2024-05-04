@@ -2,58 +2,53 @@ const asyncHandler = require('express-async-handler');
 const Tekken = require('../models/Tekken');
 
 class TekkenController {
-    // CREATE
-    static registerToTekkenEvent = asyncHandler(async (req, res) => {
-        const { fullName, yearAndSection, stiEmailAddress, discordUsername } = req.body;
+  // CREATE
+  static registerToTekkenEvent = asyncHandler(async (req, res) => {
+    const { fullName, yearAndSection, stiEmailAddress, discordUsername } = req.body;
 
-        if (!fullName || !yearAndSection || !stiEmailAddress || !discordUsername) {
-            return res.status(400).json({ message: 'All fields are required.' });
-        }
+    if (!fullName ||!yearAndSection ||!stiEmailAddress ||!discordUsername) {
+      return res.status(400).json({ message: 'All fields are required.' });
+    }
 
-        // Create and store new Tekken entry
-        const tekkenEntryObject = {
-            fullName,
-            yearAndSection,
-            stiEmailAddress,
-            discordUsername
-        };
+    try {
+      const tekkenEntry = await Tekken.create({ fullName, yearAndSection, stiEmailAddress, discordUsername });
+      res.status(201).json({ message: 'Entry has been successfully registered!' });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Internal Server Error' });
+    }
+  });
 
-        const tekkenEntry = await Tekken.create(tekkenEntryObject);
+  // READ ALL
+  static getTekkenEntries = asyncHandler(async (req, res) => {
+    try {
+      const tekkenEntries = await Tekken.find().lean().exec();
+      res.json(tekkenEntries);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Internal Server Error' });
+    }
+  });
 
-        if (tekkenEntry) {
-            return res.status(201).json({ message: 'Entry has been successfully registered!' });
-        } else {
-            return res.status(400).json({ message: 'Invalid data received.' });
-        }
-    });
+  // READ SINGLE
+  static getSingleTekkenEntry = asyncHandler(async (req, res) => {
+    const { fullName } = req.params; 
 
-    // READ ALL
-    static getTekkenEntries = asyncHandler(async (req, res) => {
-        const tekkenEntries = await Tekken.find().lean();
+    if (!fullName) {
+      return res.status(400).json({ message: 'Full name is required.' });
+    }
 
-        if (!tekkenEntries?.length) {
-            return res.status(400).json({ message: 'No entries found.' });
-        }
-
-        res.json(tekkenEntries);
-    });
-
-    // READ SINGLE
-    static getSingleTekkenEntry = asyncHandler(async (req, res) => {
-        const fullName = req.params.fullName;
-
-        if (!fullName) {
-            return res.status(400).json({ message: 'Full name is required.' });
-        }
-
-        const tekkenEntry = await Tekken.findOne({ fullName }).lean().exec();
-
-        if (!tekkenEntry) {
-            return res.status(404).json({ message: 'No entry found.' });
-        }
-
-        res.json(tekkenEntry);
-    });
+    try {
+      const tekkenEntry = await Tekken.findOne({ fullName }).lean().exec();
+      if (!tekkenEntry) {
+        return res.status(404).json({ message: 'No entry found.' });
+      }
+      res.json(tekkenEntry);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Internal Server Error' });
+    }
+  });
 }
 
 module.exports = TekkenController;

@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
-const Student= new mongoose.Schema({
-  Name: { type: String, required: true },
+const StudentSchema = new mongoose.Schema({
+  name: { type: String, required: true },
   coursesAndSections: { type: String, required: true },
   discordName: { type: String, required: true },
   email: { type: String, required: true },
@@ -9,18 +9,13 @@ const Student= new mongoose.Schema({
   currentRanks: { type: String, required: true }
 });
 
-// Define the event schema
-const lolSchema = new mongoose.Schema({
-    teamName: {
-        type: String,
-        required: true
-    },
-    
-    members: {type:Student,required:true} 
+const Student = mongoose.model('Student', StudentSchema);
 
+const LeagueOfLegendsSchema = new mongoose.Schema({
+  teamName: { type: String, required: true },
+  members: [{ type: StudentSchema, required: true }]
 });
 
-// Create the event model
-const LeagueOfLegends = mongoose.model('LeagueOfLegends', lolSchema);
+const LeagueOfLegends = mongoose.model('LeagueOfLegends', LeagueOfLegendsSchema);
 
-module.exports = LeagueOfLegends;
+module.exports = { Student, LeagueOfLegends };

@@ -52,7 +52,7 @@ app.use('/CSQuizBee', require('./routes/CSquizbeeRoutes'))
 app.use('/events', require('./routes/eventRoutes'))
 app.use('/notes', require('./routes/noteRoutes'))
 app.use('/appdev', require('./routes/applicationDevRoutes'))
-//app.use('/webdev', require('./routes/webdevRoutes'))
+app.use('/webdev', require('./routes/webdevRoutes'))
 
 
 

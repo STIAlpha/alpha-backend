@@ -1,5 +1,5 @@
 const asyncHandler = require('express-async-handler');
-const WebDevEntry = require('../models/WebDevEntry');
+const WebDevEntry = require('../models/webdev');
 
 class WebDevController {
     // CREATE
@@ -9,16 +9,16 @@ class WebDevController {
         if (!teamName || !members || !teamRepEmail) {
             return res.status(400).json({ message: 'All fields required' });
         }
+        const webDevTeam = await WebDevEntry.findOne({ teamName }).lean().exec();
 
-        const membersArray = members.map(member => ({
-            Name: member.Name,
-            coursesAndSections: member.coursesAndSections,
-            githubProfiles: member.githubProfiles
-        }));
-    
+        if (webDevTeam) {
+            return res.status(404).json({ message: 'Team already registered' });
+        }
+
+
         const webDevEntryObject = {
             teamName,
-            members: membersArray,
+            members,
             teamRepEmail 
         };
     
@@ -33,7 +33,7 @@ class WebDevController {
 
     // READ
     static getSingleWebDevTeam = asyncHandler(async (req, res) => {
-        const teamName = req.params.teamName;
+        const {teamName} = req.body;
 
         if (!teamName) {
             return res.status(400).json({ message: 'Team name is required' });

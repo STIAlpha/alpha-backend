@@ -10,7 +10,7 @@ router.use(verifyJWT);
 router.route('/')
     .get(verifyRoles(ROLES_LIST.Admin), tekkenController.getTekkenEntries)
     .post(verifyRoles(ROLES_LIST.Admin), tekkenController.registerToTekkenEvent);
-
+ 
 router.route('/:fullName')
     .get(verifyRoles(ROLES_LIST.Admin), tekkenController.getSingleTekkenEntry);
 

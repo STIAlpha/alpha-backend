@@ -5,64 +5,66 @@ const CSQuizbee = require('../models/QuizBeeCS');
 class CSquizbeeController {
     // CREATE
     static registerToCSquizbeeEvent = asyncHandler(async (req, res) => {
-    const { Name, YearAndSection, STIstudentEmail} = req.body;
+        const { Name, YearAndSection, STIstudentEmail } = req.body;
 
-    if (!Name || !YearAndSection || !STIstudentEmail) {
-      return res.status(400).json({ message: 'All fields required' });
-    }
+        if (!Name || !YearAndSection || !STIstudentEmail) {
+            return res.status(400).json({ message: 'All fields required' });
+        }
 
-    const validStudentEmail = await Members.findOne({STIstudentEmail}).lean().exec()
+        const validStudentEmail = await Members.findOne({ student_email: STIstudentEmail }).lean()
 
-    if(!validStudentEmail) {
-        
-        return res.status(400).json({message: 'Not a valid student email'})
-    }
+        if (!validStudentEmail) {
 
-    const duplicate = await CSQuizbee.findOne({ Name }).lean().exec();
+            return res.status(400).json({ message: 'Not a valid student email' })
+        }
 
-    if(duplicate) {
-        return res.status(409).json({message: 'Student already registered.'});
-    }
+        const duplicate = await CSQuizbee.findOne({ Name }).lean();
 
-    const CSquizbeeEntryObject = { Name, YearAndSection, STIstudentEmail}
+        if (duplicate) {
+            return res.status(409).json({ message: 'Student already registered.' });
+        }
 
-     // Create and store new chess entry
-     const CSquizbeeEntry = await ITQuizbee.create(CSquizbeeEntryObject)
+        const CSquizbeeEntryObject = { Name, YearAndSection, STIstudentEmail }
 
-     if(CSquizbeeEntry) {
-        return res.status(200).json({message: 'Student has been successfully registered!'})
-     }else {
-        return res.status(400).json({message: 'Invalid data received'})
-     }   
-  });
+        // Create and store new chess entry
+        const CSquizbeeEntry = await ITQuizbee.create(CSquizbeeEntryObject)
 
-  static getCSquizbeeEntries = asyncHandler(async (req, res) => {
+        if (CSquizbeeEntry) {
+            return res.status(200).json({ message: 'Student has been successfully registered!' })
+        } else {
+            return res.status(400).json({ message: 'Invalid data received' })
+        }
+    });
 
-    const CSquizbeeEntries = await CSQuizbee.find().lean()
 
-    // If no users 
-    if (!CSquizbeeEntries?.length) {
-        return res.status(400).json({ message: 'No entries found' })
-    }
+    static getCSquizbeeEntries = asyncHandler(async (req, res) => {
+        const { Name } = req.body
 
-    res.json(CSquizbeeEntries);
+        const CSquizbeeEntries = await CSQuizbee.findOne(Name).lean()
 
-});
+        // If no users 
+        if (!CSquizbeeEntries) {
+            return res.status(400).json({ message: 'CSquizbeefound' })
+        }
+
+        res.json(CSquizbeeEntries);
+
+    });
 
     static getCSquizbeeEntryByName = asyncHandler(async (req, res) => {
 
         const studentName = req.params.Name;
 
-        if(!studentName) {
-            return res.status(400).json({message: 'Enter a student name.'});
+        if (!studentName) {
+            return res.status(400).json({ message: 'Enter a student name.' });
         }
 
-        const student = await CSQuizbee.findOne({Name}).lean().exec()
+        const student = await CSQuizbee.findOne({ Name }).lean().exec()
 
-        if(!student) {
-            return res.status(400).json({message: 'No entry found'})
+        if (!student) {
+            return res.status(400).json({ message: 'No entry found' })
         }
         res.json(student)
     })
 }
-    module.exports = CSquizbeeController;
+module.exports = CSquizbeeController;

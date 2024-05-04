@@ -48,6 +48,7 @@ app.use('/ITQuizBee', require('./routes/ITquizbeeRoutes'))
 app.use('/CSQuizBee', require('./routes/CSquizbeeRoutes'))
 app.use('/events', require('./routes/eventRoutes'))
 app.use('/notes', require('./routes/noteRoutes'))
+app.use('/webdev', require('./routes/webdevRoutes'))
 
 
 

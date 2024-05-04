@@ -7,14 +7,13 @@ const ROLES_LIST = require('../config/roles_list')
 const verifyRoles = require('../middleware/verifyRoles')
 const imageProcessing = require('../utils/imageProcessing')
 
-router.use(verifyJWT)
-router.route('/')
-    .get(verifyRoles(ROLES_LIST.Admin), chessController.getChessEntries)
-    .post(verifyRoles(ROLES_LIST.Admin), chessController.registerToChessEvent)
+router.route('/get')
+    .get(/*verifyRoles(ROLES_LIST.Admin), */  chessController.getChessEntries)
+    .post(/*verifyRoles(ROLES_LIST.Admin), */  chessController.registerToChessEvent)
 
 
 router.route('/:studentName')
-    .get(verifyRoles(ROLES_LIST.Admin), chessController.getChessEntryByName)
+    .get(/*verifyRoles(ROLES_LIST.Admin), */  chessController.getChessEntryByName)
     
     
 module.exports = router;

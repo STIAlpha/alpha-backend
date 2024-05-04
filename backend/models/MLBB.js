@@ -18,7 +18,7 @@ const mLBBSchema = new mongoose.Schema({
     },
     
     members: {
-      type:Students, rewuired:true
+      type:[Student], rewuired:true
     }
 
 });

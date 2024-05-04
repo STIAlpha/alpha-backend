@@ -1,20 +1,15 @@
-const { default: mongoose } = require("mongoose");
+const mongoose = require('mongoose')
 
 const CSquizBeeSchema = new mongoose.Schema({
   Name: {
       type: String,
       required: true
   },
-  YearAndSection: [{
-    Year: {
+  YearAndSection:  {
       type: String,
       required: true
     },
-    Section: {
-      type: String,
-      required: true
-    }
-  }],
+    
   
   STIstudentEmail: {
     type: String,
@@ -23,4 +18,4 @@ const CSquizBeeSchema = new mongoose.Schema({
 })
 
 const CSQuizBee = mongoose.model('CSQuizBee', CSquizBeeSchema);
-exports.modules = CSQuizBee;
+exports.module = CSQuizBee;

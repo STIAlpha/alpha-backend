@@ -13,16 +13,17 @@ router.use(verifyJWT);
 // Routes for application development event handling
 router
   .route("/")
-  .get(verifyRoles(ROLES_LIST.Admin), applicationDevController.getADEntries) // Get all teams, admin only
+  .get(/*verifyRoles(ROLES_LIST.Admin), */ applicationDevController.getADEntries) // Get all teams, admin only
+
   .post(
-    verifyRoles(ROLES_LIST.Admin),
+    /*verifyRoles(ROLES_LIST.Admin), */
     applicationDevController.registerToADEvent
   ); // Register a new team, admin only
 
 router
   .route("/:teamName")
   .get(
-    verifyRoles(ROLES_LIST.Admin),
+    /*verifyRoles(ROLES_LIST.Admin), */
     applicationDevController.getADEntryByTeamName
   ); // Get a single team by team name, admin only
 

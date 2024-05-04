@@ -22,7 +22,10 @@ class TekkenController {
   // READ ALL
   static getTekkenEntries = asyncHandler(async (req, res) => {
     try {
-      const tekkenEntries = await Tekken.find().lean().exec();
+      const tekkenEntries = await Tekken.find().lean();
+      if (!tekkenEntries.length) {
+        return res.status(400).json({ message: "No entries found" });
+      }
       res.json(tekkenEntries);
     } catch (error) {
       console.error(error);

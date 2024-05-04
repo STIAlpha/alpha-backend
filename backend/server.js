@@ -40,6 +40,8 @@ app.use('/users', require('./routes/userRoutes'))
 app.use('/auth', require('./routes/authRoutes'))
 app.use('/members', require('./routes/membersRoutes'))
 app.use('/attendance', require('./routes/attendanceRoutes'))
+app.use('/ITQuizBee', require('./routes/ITquizbeeRoutes'))
+app.use('/CSQuizBee', require('./routes/CSquizbeeRoutes'))
 app.use('/events', require('./routes/eventRoutes'))
 app.use('/notes', require('./routes/noteRoutes'))
 
@@ -61,6 +63,7 @@ mongoose.connection.once('open', () => {
     console.log('Connected to MongoDB')
     app.listen(PORT, () => console.log(`Server running on port ${PORT}`))
 })
+
 
 mongoose.connection.on('error', err => {
     console.log(err)

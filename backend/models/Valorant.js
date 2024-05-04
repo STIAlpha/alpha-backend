@@ -1,14 +1,16 @@
 const mongoose = require('mongoose');
-
+const Student= new mongoose.Schema({
+    Name: { type: String, required: true },
+    coursesAndSections: { type: String, required: true },
+    email: { type: String, required: true },
+    discordusername: { type: Number, required: true },
+    ign: { type: String, required: true },
+    coachname: { type: String, required: true },
+});
 // Define the Valorant event schema
 const valorantSchema = new mongoose.Schema({
     teamName: { type: String, required: true },
-    fullNamesOfPlayers: { type: String, required: true },
-    programAndSection: { type: String, required: true },
-    stiEmailAddresses: { type: String, required: true },
-    discordUsernames: { type: String, required: true },
-    valorantIGNsAndTaglines: { type: String, required: true },
-    coachName: { type: String, default: '' }
+    members: {type:[Student],required:true}
 });
 
 // Create the event model

@@ -1,39 +1,25 @@
 const mongoose = require('mongoose');
 
+const Student= new mongoose.Schema({
+  Name: { type: String, required: true },
+  coursesAndSections: { type: String, required: true },
+  email: { type: String, required: true },
+  mobileNumber: { type: Number, required: true },
+  ign: { type: String, required: true },
+  playerId: { type: String, required: true },
+  currentMLBBRanks: { type: String, required: true }
+});
+
 // Define the event schema
 const mLBBSchema = new mongoose.Schema({
     teamName: {
         type: String,
         required: true
     },
-    studentEmail: { 
-        type: String, 
-        required: true 
-    },
-    mobileNumber:{
-        type: String,
-        required: true
-    },
-    teamMembers: [{
-
-      nameOfMembers: { 
-        type: String, 
-        required: true 
-    },
-      inGameName: { 
-        type: String,
-        required: true 
-    },
-      currentMLBBRank: { 
-        type: String,
-        required: true  
-    },
-      courseAndSection: { 
-        type: String ,
-        required: true 
+    
+    members: {
+      type:Students, rewuired:true
     }
-
-    }] 
 
 });
 

@@ -8,7 +8,7 @@ class ChessController {
     static registerToChessEvent = asyncHandler(async (req, res) => {
     const { studentName, courseAndSection, student_email, chessRating, mobileNumber } = req.body;
 
-    if (!studentName || !courseAndSection || !studentEmail || !mobileNumber) {
+    if (!studentName || !courseAndSection || !student_email || !mobileNumber) {
       return res.status(400).json({ message: 'All fields required' });
     }
 

@@ -1,14 +1,24 @@
 const asyncHandler = require('express-async-handler');
 const Tekken = require('../models/Tekken');
+const Members = require('../models/Members');
 
 class TekkenController {
   // CREATE
   static registerToTekkenEvent = asyncHandler(async (req, res) => {
     const { fullName, yearAndSection, stiEmailAddress, discordUsername } = req.body;
 
-    if (!fullName ||!yearAndSection ||!stiEmailAddress ||!discordUsername) {
+    if (!fullName || !yearAndSection || !stiEmailAddress || !discordUsername) {
       return res.status(400).json({ message: 'All fields are required.' });
     }
+
+    const check = await Members.findOne({ stiEmailAddress }).lean().exec();
+        if (!check) {
+            return res.status(404).json({ message: 'No account found' });
+        }
+        const check2 = await Tekken.findOne({ stiEmailAddress }).lean().exec();
+        if (check2) {
+            return res.status(404).json({ message: 'account already registered' });
+        }
 
     try {
       const tekkenEntry = await Tekken.create({ fullName, yearAndSection, stiEmailAddress, discordUsername });
@@ -33,11 +43,11 @@ class TekkenController {
     }
   });
 
-  
+
 
   // READ SINGLE
   static getSingleTekkenEntry = asyncHandler(async (req, res) => {
-    const { fullName } = req.params; 
+    const { fullName } = req.body;
 
     if (!fullName) {
       return res.status(400).json({ message: 'Full name is required.' });

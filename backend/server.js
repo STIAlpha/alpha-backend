@@ -33,7 +33,7 @@ app.get('/register', (req, res) => {
 app.get('/get-upload', (req, res) => {
     res.sendFile(path.join(__dirname, 'views', 'sample.html'));
   });
-app.use('./tekken', require('./routes/tekkenRoutes'))
+app.use('/tekken', require('./routes/tekkenRoutes'))
 app.use('/uploads', express.static('uploads'))
 app.use('/', require('./routes/root'))
 app.use('/users', require('./routes/userRoutes'))
@@ -42,9 +42,9 @@ app.use('/members', require('./routes/membersRoutes'))
 app.use('/wildirft', require('./routes/wildriftRoutes'))
 app.use('/chibby', require('./routes/chibbyRoutes'))
 app.use('/beyond', require('./routes/beyondRoutes'))
-app.use('./chess', require('./routes/chessRoutes'))
-app.use('./mlbb', require('./routes/mLBBRoutes'))
-app.use('./lol', require('./routes/lolRoutes'))
+app.use('/chess', require('./routes/chessRoutes'))
+app.use('/mlbb', require('./routes/mLBBRoutes'))
+app.use('/lol', require('./routes/lolRoutes'))
 
 app.use('/attendance', require('./routes/attendanceRoutes'))
 app.use('/ITQuizBee', require('./routes/ITquizbeeRoutes'))

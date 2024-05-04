@@ -27,7 +27,7 @@ class CSquizbeeController {
         const CSquizbeeEntryObject = { Name, YearAndSection, STIstudentEmail }
 
         // Create and store new chess entry
-        const CSquizbeeEntry = await ITQuizbee.create(CSquizbeeEntryObject)
+        const CSquizbeeEntry = await CSQuizbee.create(CSquizbeeEntryObject)
 
         if (CSquizbeeEntry) {
             return res.status(200).json({ message: 'Student has been successfully registered!' })
@@ -53,9 +53,9 @@ class CSquizbeeController {
 
     static getCSquizbeeEntryByName = asyncHandler(async (req, res) => {
 
-        const studentName = req.params.Name;
+        const {Name} = req.body;
 
-        if (!studentName) {
+        if (!Name) {
             return res.status(400).json({ message: 'Enter a student name.' });
         }
 

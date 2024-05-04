@@ -10,7 +10,7 @@ const chessSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    studentEmail: {
+    student_email: {
         type: String, // Store as JSON or text
         required: true
     },

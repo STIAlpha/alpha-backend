@@ -50,6 +50,7 @@ class ChessController {
 
 });
 
+
     static getChessEntryByName = asyncHandler(async (req, res) => {
 
         const studentName = req.params.studentName;

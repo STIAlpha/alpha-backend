@@ -12,7 +12,7 @@ router.route('/get')
     .post(/*verifyRoles(ROLES_LIST.Admin), */  chessController.registerToChessEvent)
 
 
-router.route('/:studentName')
+router.route('/studentName')
     .get(/*verifyRoles(ROLES_LIST.Admin), */  chessController.getChessEntryByName)
     
     

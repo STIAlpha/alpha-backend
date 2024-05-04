@@ -44,7 +44,7 @@ class LOLController {
   }
 
   static async getTeams(req, res) {
-    const teams = await LeagueOfLegendsModel.find().populate('members').lean();
+    const teams = await LeagueOfLegendsModel.find().lean();
     if (!teams.length) {
       return res.status(404).json({ message: 'No teams found.' });
     }

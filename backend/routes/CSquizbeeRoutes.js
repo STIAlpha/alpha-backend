@@ -7,6 +7,6 @@ router.route('/').get(/*verifyRoles(ROLES_LIST.Admin), */ CSQuizBeeController.ge
 router.route('/register').post(/*verifyRoles(ROLES_LIST.Admin), */CSQuizBeeController.registerToCSquizbeeEvent)
 
 
-router.route('/:studentName').get(/*verifyRoles(ROLES_LIST.Admin), */CSQuizBeeController.getCSquizbeeEntryByName)
+router.route('/studentName').get(/*verifyRoles(ROLES_LIST.Admin), */CSQuizBeeController.getCSquizbeeEntryByName)
     
 module.exports = router;

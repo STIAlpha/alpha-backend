@@ -9,13 +9,12 @@ const StudentSchema = new mongoose.Schema({
   currentRanks: { type: String, required: true }
 });
 
-const Student = mongoose.model('Student', StudentSchema);
 
 const LeagueOfLegendsSchema = new mongoose.Schema({
   teamName: { type: String, required: true },
-  members: [{ type: StudentSchema, required: true }]
+  members: [{ type: StudentSchema}]
 });
 
 const LeagueOfLegends = mongoose.model('LeagueOfLegends', LeagueOfLegendsSchema);
 
-module.exports = { Student, LeagueOfLegends };
+module.exports =  LeagueOfLegends ;

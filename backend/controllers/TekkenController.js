@@ -17,7 +17,7 @@ class TekkenController {
       console.error(error);
       res.status(500).json({ message: 'Internal Server Error' });
     }
-  })
+  });
 
   // READ ALL
   static getTekkenEntries = asyncHandler(async (req, res) => {
@@ -31,7 +31,7 @@ class TekkenController {
       console.error(error);
       res.status(500).json({ message: 'Internal Server Error' });
     }
-  })
+  });
 
   
 
@@ -53,7 +53,7 @@ class TekkenController {
       console.error(error);
       res.status(500).json({ message: 'Internal Server Error' });
     }
-  })
+  });
 }
 
 module.exports = TekkenController;

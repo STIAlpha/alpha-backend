@@ -1,55 +1,71 @@
-const { Student } = require('../models/LOL');
-const { LeagueOfLegends: LeagueOfLegendsModel } = require('../models/LOL');
+const asyncHandler = require('express-async-handler')
+const Members = require("../models/Members");
+const LeagueOfLegendsModel = require('../models/LOL');
 
 class LOLController {
   // CREATE
-  static async registerTeam(req, res) {
-    const { teamName, studentEmail, teamMembers } = req.body;
+   static registerTeam = asyncHandler(async (req, res) => {
+    const { teamName, members } = req.body;
 
-    if (!teamName ||!studentEmail ||!Array.isArray(teamMembers) || teamMembers.length!== 5) {
-      return res.status(400).json({ message: 'Invalid request. Please provide team name, student email, and 5 team members.' });
+    if (!teamName || !members) {
+        return res.status(400).json({ message: 'Invalid request. Please provide team name and team members.' });
     }
 
-    const student = await Student.findOne({ email: studentEmail }).lean().exec();
-    if (!student) {
-      return res.status(400).json({ message: 'Not a valid student email.' });
+    // Check for duplicate emails in members
+    const memberEmails = new Set();
+    for (const member of members) {
+        if (memberEmails.has(member.email)) {
+            return res.status(400).json({ message: 'Duplicate emails found in team members.' });
+        }
+        memberEmails.add(member.email);
+    }
+
+    // Check if each member exists in the database
+    for (const member of members) {
+        const student = await Members.findOne({ email: member.email }).lean().exec();
+        if (!student) {
+            return res.status(400).json({ message: `Student with email ${member.email} not found.` });
+        }
     }
 
     const duplicate = await LeagueOfLegendsModel.findOne({ teamName }).lean().exec();
     if (duplicate) {
-      return res.status(400).json({ message: 'Team already registered.' });
+        return res.status(400).json({ message: 'Team already registered.' });
     }
 
-    const teamMembersWithIds = teamMembers.map((member) => ({ _id: member.studentId }));
-    const team = new LeagueOfLegendsModel({ teamName, members: teamMembersWithIds });
+    const team = new LeagueOfLegendsModel({ teamName, members });
     try {
-      await team.save();
-      res.status(201).json({ message: 'Team has been successfully registered!' });
+        await team.save();
+        res.status(201).json({ message: 'Team has been successfully registered!' });
     } catch (error) {
-      res.status(400).json({ message: 'Invalid data received. Please check your request.' });
+        res.status(400).json({ message: 'Invalid data received. Please check your request.' });
     }
-  }
+});
 
-  static async getTeam(req, res) {
-    const teamName = req.params.teamName;
+  static getTeam =  asyncHandler(async (req, res) => {
+    const {teamName} = req.body;
     if (!teamName) {
       return res.status(400).json({ message: 'Invalid request. Please provide a team name.' });
     }
 
-    const team = await LeagueOfLegendsModel.findOne({ teamName }).populate('members').lean().exec();
+    const team = await LeagueOfLegendsModel.findOne({ teamName }).lean().exec();
     if (!team) {
       return res.status(404).json({ message: 'No team found with that name.' });
     }
     res.json(team);
-  }
+  });
 
-  static async getTeams(req, res) {
+  static getTeams=  asyncHandler(async (req, res) => {
     const teams = await LeagueOfLegendsModel.find().lean();
-    if (!teams.length) {
+    if (!teams?.length) {
       return res.status(404).json({ message: 'No teams found.' });
     }
     res.json(teams);
-  }
+  });
+
+ 
+
+
 }
 
 module.exports = LOLController;

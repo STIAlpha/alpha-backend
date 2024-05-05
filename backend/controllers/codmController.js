@@ -7,57 +7,45 @@ class CODMController {
   static registerToCODMEvent = asyncHandler(async (req, res) => {
     const {
       teamName,
-      memberNames,
-      coursesAndSections,
-      email,
-      mobileNumber,
-      igns,
-      playerIds,
-      currentRanks,
-      agreement
+      members
     } = req.body;
 
     if (
      !teamName ||
-     !memberNames ||
-     !coursesAndSections ||
-     !email ||
-     !mobileNumber ||
-     !igns ||
-     !playerIds ||
-     !currentRanks ||
-      agreement === undefined
+     !members
     ) {
       return res.status(400).json({ message: 'All fields required' });
     }
 
-    const validEmail = await Members.findOne({ student_email: email.toLowerCase() }).lean().exec();
+     // Check for duplicate emails in members
+     const memberEmails = new Set();
+     for (const member of members) {
+         if (memberEmails.has(member.email)) {
+             return res.status(400).json({ message: 'Duplicate emails found in team members.' });
+         }
+         memberEmails.add(member.email);
+     }
+ 
+     // Check if each member exists in the database
+     for (const member of members) {
+         const student = await Members.findOne({ student_email: member.email }).lean().exec();
+         if (!student) {
+             return res.status(400).json({ message: `Student with email ${member.email} not found.` });
+         }
+     }
+ 
 
-    if (!validEmail) {
-      return res.status(400).json({ message: 'Not a valid email' });
-    }
-
-    const duplicate = await CODMEventEntry.findOne({ 'members.email': email.toLowerCase() }).lean().exec();
+    const duplicate = await CODMEventEntry.findOne({ teamName  }).lean().exec();
 
     if (duplicate) {
-      return res.status(409).json({ message: 'Team already registered.' });
+      return res.status(409).json({ message: 'Team Name already registered.' });
     }
 
-    const members = memberNames.map((member, index) => ({
-      name: member,
-      coursesAndSections,
-      email,
-      mobileNumber,
-      ign: igns[index],
-      playerId: playerIds[index],
-      currentRanks: currentRanks[index]
-    }));
 
     const codmEntryObject = {
       teamName,
-      members,
-      agreement
-    };
+      members
+        };
 
     try {
       const codmEntry = await CODMEventEntry.create(codmEntryObject);
@@ -69,7 +57,7 @@ class CODMController {
 
   // READ
   static getSingleCODMTeam = asyncHandler(async (req, res) => {
-    const teamName = req.params.teamName;
+    const {teamName} = req.body;
 
     if (!teamName) {
       return res.status(400).json({ message: 'Team name is required' });

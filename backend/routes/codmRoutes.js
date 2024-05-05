@@ -6,7 +6,7 @@ router.route('/')
  .get(codmController.getCODMTeams)
  .post(codmController.registerToCODMEvent);
 
-router.route('/:teamName')
+router.route('/teamName')
  .get(codmController.getSingleCODMTeam);
 
 module.exports = router;

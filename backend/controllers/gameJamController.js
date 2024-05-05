@@ -1,7 +1,4 @@
 const asyncHandler = require("express-async-handler");
-const exceljs = require("exceljs");
-const fs = require("fs");
-const path = require("path");
 const Members = require("../models/Members");
 const GameJam = require("../models/GameJam");
 
@@ -17,52 +14,63 @@ class GameJamController {
     } = req.body;
 
     if (
-      !teamName ||
-      !teamRepEmail ||
-      !memberNames ||
-      !programsAndSections ||
-      !themeVote
+     !teamName ||
+     !teamRepEmail ||
+     !memberNames ||
+     !programsAndSections ||
+     !themeVote
     ) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
-    const duplicate = await Members.findOne({ teamRepEmail }).lean().exec();
+    const validTeamRepEmail = await Members.findOne({ student_email: teamRepEmail.toLowerCase() }).lean().exec();
+
+    if (!validTeamRepEmail) {
+      return res.status(400).json({ message: "Not a valid team representative email" });
+    }
+
+    const duplicate = await GameJam.findOne({ teamRepEmail: teamRepEmail.toLowerCase() }).lean().exec();
 
     if (duplicate) {
       return res
-        .status(409)
-        .json({ message: "Team representative already registered a team." });
+       .status(409)
+       .json({ message: "Team representative already registered a team." });
     }
 
-    const gameJamEntry = await GameJam.create({
+    const members = memberNames.map((member, index) => ({
+      name: member,
+      coursesAndSections: programsAndSections[index],
+    }));
+
+    const gameJamEntryObject = {
       teamName,
       teamRepEmail,
-      memberNames,
-      programsAndSections,
+      members,
       themeVote,
-    });
+    };
 
-    if (gameJamEntry) {
-      return res
-        .status(201)
-        .json({
-          message: "Team has been successfully registered!",
-          data: gameJamEntry,
-        });
-    } else {
-      return res.status(400).json({ message: "Invalid data received" });
+    try {
+      const gameJamEntry = await GameJam.create(gameJamEntryObject);
+      res.status(201).json({
+        message: "Team has been successfully registered!",
+        data: gameJamEntry,
+      });
+    } catch (error) {
+      res.status(400).json({ message: "Invalid data received" });
     }
   });
 
   // GET ALL TEAMS
   static getAllTeams = asyncHandler(async (req, res) => {
-    const teams = await GameJam.find().lean().exec();
-
-    if (!teams.length) {
-      return res.status(404).json({ message: "No teams found" });
+    try {
+      const teams = await GameJam.find().lean().exec();
+      if (!teams.length) {
+        return res.status(404).json({ message: "No teams found" });
+      }
+      res.json(teams);
+    } catch (error) {
+      res.status(500).json({ message: "Internal Server Error" });
     }
-
-    res.json(teams);
   });
 
   // GET SINGLE TEAM
@@ -73,13 +81,15 @@ class GameJamController {
       return res.status(400).json({ message: "Team name is required" });
     }
 
-    const team = await GameJam.findOne({ teamName }).lean().exec();
-
-    if (!team) {
-      return res.status(404).json({ message: "No team found" });
+    try {
+      const team = await GameJam.findOne({ teamName }).lean().exec();
+      if (!team) {
+        return res.status(404).json({ message: "No team found" });
+      }
+      res.json(team);
+    } catch (error) {
+      res.status(500).json({ message: "Internal Server Error" });
     }
-
-    res.json(team);
   });
 }
 

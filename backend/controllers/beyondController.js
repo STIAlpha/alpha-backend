@@ -1,5 +1,3 @@
-// beyondController.js
-const asyncHandler = require('express-async-handler');
 const Members = require('../models/Members');
 const Beyond = require('../models/Beyond');
 
@@ -7,33 +5,35 @@ class BeyondController {
   // CREATE
   static async registerToBeyondEvent(req, res) {
     const { teamName, members, studentEmail } = req.body;
-
-    if (!teamName ||!Array.isArray(members) ||!members.length ||!studentEmail) {
+  
+    if (!teamName ||!Array.isArray(members) || members.length < 4 ||!studentEmail) {
       return res.status(400).json({ message: 'All fields required' });
     }
-
-    const validStudentEmail = await Members.findOne({ studentEmail }).lean().exec();
-
+  
+    for (const member of members) {
+      if (!member.name ||!member.yearAndSection) {
+        return res.status(400).json({ message: 'All member fields required' });
+      }
+    }
+  
+    const validStudentEmail = await Members.findOne({ student_email: studentEmail.toLowerCase() }).lean().exec();
+  
     if (!validStudentEmail) {
       return res.status(400).json({ message: 'Not a valid student email' });
     }
-
+  
     const duplicate = await Beyond.findOne({ studentEmail }).lean().exec();
-
+  
     if (duplicate) {
       return res.status(409).json({ message: 'Team already registered.' });
     }
-
-    if (members.length!== 4) {
-      return res.status(400).json({ message: 'A team must have exactly 4 members' });
-    }
-
+  
     const beyondEntryObject = {
       teamName,
-      studentEmail,
+      studentEmail: studentEmail.toLowerCase(), 
       members,
     };
-
+  
     try {
       const beyondEntry = await Beyond.create(beyondEntryObject);
       res.status(201).json({ message: 'Team has been successfully registered!' });
@@ -46,7 +46,7 @@ class BeyondController {
     const teamName = req.params.teamName;
 
     if (!teamName) {
-      return res.status(400).json({ message: '.' });
+      return res.status(400).json({ message: 'Team name is required' });
     }
 
     try {

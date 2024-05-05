@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
-const Student= new mongoose.Schema({
-  Name: { type: String, required: true },
+const Student = new mongoose.Schema({
+  name: { type: String, required: true },
   coursesAndSections: { type: String, required: true },
   email: { type: String, required: true },
   mobileNumber: { type: Number, required: true },
@@ -10,20 +10,25 @@ const Student= new mongoose.Schema({
   currentMLBBRanks: { type: String, required: true }
 });
 
-// Define the event schema
 const mLBBSchema = new mongoose.Schema({
-    teamName: {
-        type: String,
-        required: true
-    },
-    
-    members: {
-      type:[Student], rewuired:true
-    }
-
+  teamName: {
+    type: String,
+    required: true
+  },
+  studentEmail: {
+    type: String,
+    required: true
+  },
+  mobileNumber: {
+    type: Number,
+    required: true
+  },
+  teamMembers: {
+    type: [Student],
+    required: true
+  }
 });
 
-// Create the event model
 const MobileLegends = mongoose.model('MobileLegends', mLBBSchema);
 
 module.exports = MobileLegends;

@@ -1,82 +1,72 @@
-const asyncHandler = require('express-async-handler')
-const exceljs = require('exceljs')
-const fs = require('fs')
-const path = require('path')
+const asyncHandler = require('express-async-handler');
 const Members = require('../models/Members');
 const MobileLegends = require('../models/MLBB');
 
 class MLBBController {
-    // CREATE
-    static registerToMLBBEvent = asyncHandler(async (req, res) => {
+  // CREATE
+  static registerToMLBBEvent = asyncHandler(async (req, res) => {
     const { teamName, studentEmail, mobileNumber, teamMembers } = req.body;
 
-    if (!teamName || !studentEmail || !mobileNumber || !Array.isArray(teamMembers) || !teamMembers.length ) {
+    if (!teamName ||!studentEmail ||!mobileNumber ||!Array.isArray(teamMembers) || teamMembers.length!== 5) {
       return res.status(400).json({ message: 'All fields required' });
     }
 
-    const validStudentEmail = await MobileLegends.findOne({ studentEmail }).lean().exec();
-    
+    const validStudentEmail = await Members.findOne({ student_email: studentEmail.toLowerCase() }).lean().exec();
+
     if (!validStudentEmail) {
-        return res.status(400).json({ message: 'Not a valid student email' });
+      return res.status(400).json({ message: 'Not a valid student email' });
     }
 
-    const duplicate = await MobileLegends.findOne({ studentEmail }).lean().exec();
+    const duplicate = await MobileLegends.findOne({ studentEmail: studentEmail.toLowerCase() }).lean().exec();
 
-    if(duplicate){
-        return res.status(400).json({ message: 'Team already registered.' });
+    if (duplicate) {
+      return res.status(400).json({ message: 'Team already registered.' });
     }
 
-    const validatedteamMembers = teamMembers.map((teamMembers) => {
-        // Perform validation on each participant object if needed
-        // (e.g., ensure required fields are present)
-        return teamMembers;
-      });
-      
-    if (validatedteamMembers.length !== 5) {
-        return res.status(400).json({ message: 'A team must have exactly 5 members' });
-    }    
+    const mLBBEntryObject = {
+      teamName,
+      studentEmail: studentEmail.toLowerCase(),
+      mobileNumber,
+      teamMembers
+    };
 
-    const mLBBEntryObject = {  teamName, studentEmail, mobileNumber, teamMembers  }
-
-    const mLBBEntry = await MobileLegends.create(mLBBEntryObject)
-
-    if(mLBBEntry){
-        return res.status(200).json({message: 'Team has been succesfully registered!'})
-    }else{
-        return res.status(400).json({message: 'Invalid data recieved'})
+    try {
+      const mLBBEntry = await MobileLegends.create(mLBBEntryObject);
+      res.status(201).json({ message: 'Team has been successfully registered!' });
+    } catch (error) {
+      res.status(400).json({ message: 'Invalid data received' });
     }
   });
 
   static getSingleMLBBTeam = asyncHandler(async (req, res) => {
-
     const teamName = req.params.teamName;
 
-    if(!teamName) {
-        return res.status(400).json({message: '.'});
+    if (!teamName) {
+      return res.status(400).json({ message: 'Team name is required' });
     }
 
-    const mLBBTeam = await MobileLegends.findOne({teamName}).lean().exec()
-
-    if(!mLBBTeam) {
-        return res.status(400).json({message: 'No team found'})
+    try {
+      const mLBBTeam = await MobileLegends.findOne({ teamName }).lean().exec();
+      if (!mLBBTeam) {
+        return res.status(404).json({ message: 'No team found' });
+      }
+      res.json(mLBBTeam);
+    } catch (error) {
+      res.status(500).json({ message: 'Internal Server Error' });
     }
-    res.json(mLBBTeam)
+  });
 
-  })
-
-  static getMLBBTeam = asyncHandler(async (req, res) => {
-
-    const mLBBTeams = await MobileLegends.find().lean()
-
-    // If no users 
-    if (!mLBBTeams?.length) {
-        return res.status(400).json({ message: 'No teams found' })
+  static getMLBBTeams = asyncHandler(async (req, res) => {
+    try {
+      const mLBBTeams = await MobileLegends.find().lean();
+      if (!mLBBTeams.length) {
+        return res.status(404).json({ message: 'No teams found' });
+      }
+      res.json(mLBBTeams);
+    } catch (error) {
+      res.status(500).json({ message: 'Internal Server Error' });
     }
-
-    res.json(mLBBTeams);
-
-});
+  });
 }
-    
-    
+
 module.exports = MLBBController;

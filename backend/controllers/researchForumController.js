@@ -1,91 +1,81 @@
-const asyncHandler = require('express-async-handler')
-const exceljs = require('exceljs')
-const fs = require('fs')
-const path = require('path')
-const Members = require('../models/Members');
+const asyncHandler = require('express-async-handler');
 const ResearchForum = require('../models/ResearchForum');
 
-class researchForumController {
-    // CREATE
-    static registerToResearchForumEvent = asyncHandler(async (req, res) => {
-    const { nameSchool, accompanyingAdviserName, studentParticipants, mobileNumberAdvisor, adviserEmail, titleResearch } = req.body;
+class ResearchForumController {
+  // CREATE
+  static async registerToResearchForumEvent(req, res) {
+    const {
+      nameSchool,
+      accompanyingAdviserName,
+      studentParticipants,
+      mobileNumberAdvisor,
+      adviserEmail,
+      titleResearch
+    } = req.body;
 
-    if (!nameSchool || !accompanyingAdviserName ||!Array.isArray(studentParticipants) || !studentParticipants.length || !mobileNumberAdvisor || !adviserEmail || !titleResearch) {
+    if (!nameSchool ||!accompanyingAdviserName ||!Array.isArray(studentParticipants) ||!studentParticipants.length ||!mobileNumberAdvisor ||!adviserEmail ||!titleResearch) {
       return res.status(400).json({ message: 'All fields required' });
-    }
-
-    const validAdviserEmail = await Members.findOne({adviserEmail}).lean().exec()  //changes to be made to validate adviser email not students from schema
-
-    if(!validAdviserEmail) {
-        
-        return res.status(400).json({message: 'Not a valid adviser email'})
     }
 
     const duplicate = await ResearchForum.findOne({ adviserEmail }).lean().exec();
 
-    if(duplicate) {
-        return res.status(409).json({message: 'Email already registered.'});
+    if (duplicate) {
+      return res.status(409).json({ message: 'Email already registered.' });
     }
 
-    const validatedStudentParticipants = studentParticipants.map((studentParticipants) => {
-        // Perform validation on each participant object if needed
-        // (e.g., ensure required fields are present)
-        return studentParticipants;
-      });
+    const validatedStudentParticipants = studentParticipants.map((participant) => {
+      // Perform validation on each participant object if needed
+      // (e.g., ensure required fields are present)
+      return participant;
+    });
 
-      if (validatedstudentParticipants.length < 1) {
-        return res.status(400).json({ message: 'A team must have more than 1 members' });
-      }
+    if (validatedStudentParticipants.length < 1) {
+      return res.status(400).json({ message: 'A team must have more than 1 members' });
+    }
 
-      const researchForumEntryObject = {
-        titleResearch,
-        adviserEmail,
-        studentParticipants: validatedStudentParticipants, // Include validated participants array
-      };
+    const researchForumEntryObject = {
+      titleResearch,
+      adviserEmail,
+      studentParticipants: validatedStudentParticipants // Include validated participants array
+    };
 
-     // Create and store research entry
-     const ResearchForumEntry = await Wildrift.create(researchForumEntryObject)
+    try {
+      const researchForumEntry = await ResearchForum.create(researchForumEntryObject);
+      return res.status(201).json({ message: 'Research Team has been successfully registered!' });
+    } catch (error) {
+      return res.status(400).json({ message: 'Invalid data received' });
+    }
+  }
 
-     if(ResearchForumEntry) {
-        return res.status(200).json({message: 'Research Team has been successfully registered!'})
-     }else {
-        return res.status(400).json({message: 'Invalid data received'})
-     }   
-  });
-
-  static getSingleResearchForumTeam = asyncHandler(async (req, res) => {
-
+  static async getSingleResearchForumTeam(req, res) {
     const studentParticipants = req.params.studentParticipants;
 
-    if(!studentParticipants) {
-        return res.status(400).json({message: '.'});
+    if (!studentParticipants) {
+      return res.status(400).json({ message: 'Student participants are required' });
     }
 
-    const ResearchForumTeam = await Wildrift.findOne({studentParticipants}).lean().exec()
-
-    if(!ResearchForumTeam) {
-        return res.status(400).json({message: 'No team found'})
+    try {
+      const researchForumTeam = await ResearchForum.findOne({ studentParticipants }).lean().exec();
+      if (!researchForumTeam) {
+        return res.status(404).json({ message: 'No team found' });
+      }
+      return res.json(researchForumTeam);
+    } catch (error) {
+      return res.status(500).json({ message: 'Internal Server Error' });
     }
-    res.json(ResearchForumTeam)
+  }
 
-
-})
-
-static getResearchForumTeam = asyncHandler(async (req, res) => {
-
-    const ResearchForumTeams = await ResearchForum.find().lean()
-
-    // If no users 
-    if (!ResearchForumTeams?.length) {
-        return res.status(400).json({ message: 'No teams found' })
+  static async getResearchForumTeams(req, res) {
+    try {
+      const researchForumTeams = await ResearchForum.find().lean();
+      if (!researchForumTeams.length) {
+        return res.status(404).json({ message: 'No teams found' });
+      }
+      return res.json(researchForumTeams);
+    } catch (error) {
+      return res.status(500).json({ message: 'Internal Server Error' });
     }
-
-    res.json(ResearchForumTeams);
-
-});
-
-
+  }
 }
-    
-    
-    module.exports = researchForumController;
+
+module.exports = ResearchForumController;

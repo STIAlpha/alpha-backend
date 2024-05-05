@@ -45,6 +45,7 @@ app.use('/beyond', require('./routes/beyondRoutes'))
 app.use('/chess', require('./routes/chessRoutes'))
 app.use('/mlbb', require('./routes/mLBBRoutes'))
 app.use('/lol', require('./routes/lolRoutes'))
+app.use('/researchforum', require('./routes/researchForumRoutes'))
 
 app.use('/attendance', require('./routes/attendanceRoutes'))
 app.use('/ITQuizBee', require('./routes/ITquizbeeRoutes'))

@@ -45,7 +45,7 @@ app.use('/beyond', require('./routes/beyondRoutes'))
 app.use('/chess', require('./routes/chessRoutes'))
 app.use('/mlbb', require('./routes/mLBBRoutes'))
 app.use('/lol', require('./routes/lolRoutes'))
-app.use('/researchforum', require('./routes/researchForumRoutes'))
+
 
 app.use('/attendance', require('./routes/attendanceRoutes'))
 app.use('/ITQuizBee', require('./routes/ITquizbeeRoutes'))
@@ -55,8 +55,8 @@ app.use('/notes', require('./routes/noteRoutes'))
 app.use('/appdev', require('./routes/applicationDevRoutes'))
 app.use('/webdev', require('./routes/webdevRoutes'))
 app.use('/valorant', require('./routes/valorantRoutes'))
-
-
+app.use('/researchforum', require('./routes/researchForumRoutes'))
+app.use('/ideathon', require('./routes/ideathonRoutes'))
 
 app.all('*', (req, res) => {
     res.status(404)

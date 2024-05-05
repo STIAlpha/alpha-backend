@@ -1,91 +1,85 @@
-const asyncHandler = require('express-async-handler')
-const exceljs = require('exceljs')
-const fs = require('fs')
-const path = require('path')
 const Members = require('../models/Members');
 const Ideathon = require('../models/Ideathon');
 
-class ideathonController {
-    // CREATE
-    static registerToIdeathonEvent = asyncHandler(async (req, res) => {
-    const { teamName, memberName, memberYearSection, teamRepresentativeEmailAddress } = req.body;
+class IdeathonController {
+  /**
+   * Register a team to the Ideathon event
+   */
+  static async registerToIdeathonEvent(req, res) {
+    const { teamName, memberNames, memberYearSections, teamRepresentativeEmailAddress } = req.body;
 
-    if (!teamName || !Array.isArray(memberName) || !memberName.length || !Array.isArray(memberYearSection) || !memberYearSection.length || !teamRepresentativeEmailAddress ) {
-      return res.status(400).json({ message: 'All fields required' });
+    if (!teamName ||!memberNames ||!memberYearSections ||!teamRepresentativeEmailAddress) {
+      return res.status(400).json({ message: 'All fields are required' });
     }
 
-    const validteamRepresentativeEmailAddress = await Members.findOne({teamRepresentativeEmailAddress}).lean().exec()
+    if (memberNames.length!== 5) {
+      return res.status(400).json({ message: 'A team must have exactly 5 members' });
+    }
 
-    if(!validteamRepresentativeEmailAddress) {
-        
-        return res.status(400).json({message: 'Not a valid team representative email address'})
+    const validTeamRepresentativeEmailAddress = await Members.findOne({ student_email: teamRepresentativeEmailAddress }).lean().exec();
+
+    if (!validTeamRepresentativeEmailAddress) {
+      return res.status(400).json({ message: 'Not a valid team representative email address' });
     }
 
     const duplicate = await Ideathon.findOne({ teamRepresentativeEmailAddress }).lean().exec();
 
-    if(duplicate) {
-        return res.status(409).json({message: 'Email already registered.'});
+    if (duplicate) {
+      return res.status(409).json({ message: 'Email already registered.' });
     }
 
-    const validatedMemberName = memberName.map((memberName) => {
-        // Perform validation on each participant object if needed
-        // (e.g., ensure required fields are present)
-        return memberName;
-      });
+    const ideathonEntryObject = {
+      teamName,
+      teamRepresentativeEmailAddress,
+      members: memberNames.map((memberName, index) => ({
+        name: memberName,
+        yearAndSection: memberYearSections[index],
+      })),
+    };
 
-      if (validatedMemberName.length !== 5) {
-        return res.status(400).json({ message: 'A team must have exactly 5 members' });
-      }
+    try {
+      const ideathonEntry = await Ideathon.create(ideathonEntryObject);
+      return res.status(201).json({ message: 'Team has been successfully registered!' });
+    } catch (error) {
+      return res.status(400).json({ message: 'Invalid data received' });
+    }
+  }
 
-      const ideathonEntryObject = {
-        teamName,
-        teamRepresentativeEmailAddress,
-        memberName: validatedMemberName, // Include validated participants array
-      };
-
-     // Create and store new chess entry
-     const ideathonEntry = await Wildrift.create(ideathonEntryObject)
-
-     if(ideathonEntry) {
-        return res.status(200).json({message: 'Team has been successfully registered!'})
-     }else {
-        return res.status(400).json({message: 'Invalid data received'})
-     }   
-  });
-
-  static getSingleIdeathonTeam = asyncHandler(async (req, res) => {
-
+  /**
+   * Get a single Ideathon team
+   */
+  static async getSingleIdeathonTeam(req, res) {
     const teamName = req.params.teamName;
 
-    if(!teamName) {
-        return res.status(400).json({message: '.'});
+    if (!teamName) {
+      return res.status(400).json({ message: 'Team name is required' });
     }
 
-    const IdeathonTeam = await Ideathon.findOne({memberName}).lean().exec()
-
-    if(!IdeathonTeam ) {
-        return res.status(400).json({message: 'No team found'})
+    try {
+      const ideathonTeam = await Ideathon.findOne({ teamName }).lean().exec();
+      if (!ideathonTeam) {
+        return res.status(404).json({ message: 'No team found' });
+      }
+      return res.json(ideathonTeam);
+    } catch (error) {
+      return res.status(500).json({ message: 'Internal Server Error' });
     }
-    res.json(IdeathonTeam)
+  }
 
-
-})
-
-static getIdeathonTeam = asyncHandler(async (req, res) => {
-
-    const IdeathonTeams = await Ideathon.find().lean()
-
-    // If no users 
-    if (!IdeathonTeams?.length) {
-        return res.status(400).json({ message: 'No teams found' })
+  /**
+   * Get all Ideathon teams
+   */
+  static async getIdeathonTeams(req, res) {
+    try {
+      const ideathonTeams = await Ideathon.find().lean().exec();
+      if (!ideathonTeams.length) {
+        return res.status(404).json({ message: 'No teams found' });
+      }
+      return res.json(ideathonTeams);
+    } catch (error) {
+      return res.status(500).json({ message: 'Internal Server Error' });
     }
-
-    res.json(IdeathonTeams);
-
-});
-
-
+  }
 }
-    
-    
-    module.exports = ideathonController;
+
+module.exports = IdeathonController;

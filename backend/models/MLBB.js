@@ -15,15 +15,7 @@ const mLBBSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  studentEmail: {
-    type: String,
-    required: true
-  },
-  mobileNumber: {
-    type: Number,
-    required: true
-  },
-  teamMembers: {
+  members: {
     type: [Student],
     required: true
   }

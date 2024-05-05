@@ -6,7 +6,7 @@ router.route('/')
  .get(mLBBController.getMLBBTeams)
  .post(mLBBController.registerToMLBBEvent);
 
-router.route('/:teamName')
+router.route('/teamName')
  .get(mLBBController.getSingleMLBBTeam);
 
 module.exports = router;

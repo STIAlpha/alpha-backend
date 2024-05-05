@@ -8,25 +8,40 @@ class GameJamController {
     const {
       teamName,
       teamRepEmail,
-      memberNames,
-      programsAndSections,
+      members,
       themeVote,
     } = req.body;
 
     if (
      !teamName ||
      !teamRepEmail ||
-     !memberNames ||
-     !programsAndSections ||
+     !members ||
      !themeVote
     ) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
-    const validTeamRepEmail = await Members.findOne({ student_email: teamRepEmail.toLowerCase() }).lean().exec();
+    const memberEmails = new Set();
+     for (const member of members) {
+         if (memberEmails.has(member.email)) {
+             return res.status(400).json({ message: 'Duplicate emails found in team members.' });
+         }
+         memberEmails.add(member.email);
+     }
+ 
+     for (const member of members) {
+         const student = await Members.findOne({ student_email: member.email }).lean().exec();
+         if (!student) {
+             return res.status(400).json({ message: `Student with email ${member.email} not found.` });
+         }
+     }
 
-    if (!validTeamRepEmail) {
-      return res.status(400).json({ message: "Not a valid team representative email" });
+    const validTeam = await GameJam.findOne({ teamName}).lean().exec();
+
+
+
+    if (validTeam) {
+      return res.status(400).json({ message: "Not a valid team Name" });
     }
 
     const duplicate = await GameJam.findOne({ teamRepEmail: teamRepEmail.toLowerCase() }).lean().exec();
@@ -37,10 +52,7 @@ class GameJamController {
        .json({ message: "Team representative already registered a team." });
     }
 
-    const members = memberNames.map((member, index) => ({
-      name: member,
-      coursesAndSections: programsAndSections[index],
-    }));
+
 
     const gameJamEntryObject = {
       teamName,
@@ -75,7 +87,7 @@ class GameJamController {
 
   // GET SINGLE TEAM
   static getSingleTeam = asyncHandler(async (req, res) => {
-    const { teamName } = req.params;
+    const { teamName } = req.body;
 
     if (!teamName) {
       return res.status(400).json({ message: "Team name is required" });

@@ -17,7 +17,6 @@ class CODMController {
       return res.status(400).json({ message: 'All fields required' });
     }
 
-     // Check for duplicate emails in members
      const memberEmails = new Set();
      for (const member of members) {
          if (memberEmails.has(member.email)) {
@@ -26,7 +25,6 @@ class CODMController {
          memberEmails.add(member.email);
      }
  
-     // Check if each member exists in the database
      for (const member of members) {
          const student = await Members.findOne({ student_email: member.email }).lean().exec();
          if (!student) {

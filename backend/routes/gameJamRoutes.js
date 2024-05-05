@@ -10,7 +10,7 @@ router
 
 // Route for handling specific game jam team by team name
 router
- .route("/:teamName")
+ .route("/teamName")
  .get(gameJamController.getSingleTeam);
 
 module.exports = router;

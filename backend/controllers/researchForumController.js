@@ -23,20 +23,14 @@ class ResearchForumController {
       return res.status(409).json({ message: 'Email already registered.' });
     }
 
-    const validatedStudentParticipants = studentParticipants.map((participant) => {
-      // Perform validation on each participant object if needed
-      // (e.g., ensure required fields are present)
-      return participant;
-    });
-
-    if (validatedStudentParticipants.length < 1) {
-      return res.status(400).json({ message: 'A team must have more than 1 members' });
-    }
 
     const researchForumEntryObject = {
-      titleResearch,
+      nameSchool,
+      accompanyingAdviserName,
+      studentParticipants,
+      mobileNumberAdvisor,
       adviserEmail,
-      studentParticipants: validatedStudentParticipants // Include validated participants array
+      titleResearch
     };
 
     try {
@@ -48,16 +42,16 @@ class ResearchForumController {
   }
 
   static async getSingleResearchForumTeam(req, res) {
-    const studentParticipants = req.params.studentParticipants;
+    const {nameSchool} = req.body;
 
-    if (!studentParticipants) {
+    if (!nameSchool) {
       return res.status(400).json({ message: 'Student participants are required' });
     }
 
     try {
-      const researchForumTeam = await ResearchForum.findOne({ studentParticipants }).lean().exec();
+      const researchForumTeam = await ResearchForum.findOne({ nameSchool }).lean().exec();
       if (!researchForumTeam) {
-        return res.status(404).json({ message: 'No team found' });
+        return res.status(404).json({ message: 'No School found' });
       }
       return res.json(researchForumTeam);
     } catch (error) {
@@ -69,7 +63,7 @@ class ResearchForumController {
     try {
       const researchForumTeams = await ResearchForum.find().lean();
       if (!researchForumTeams.length) {
-        return res.status(404).json({ message: 'No teams found' });
+        return res.status(404).json({ message: 'No Particioants found' });
       }
       return res.json(researchForumTeams);
     } catch (error) {

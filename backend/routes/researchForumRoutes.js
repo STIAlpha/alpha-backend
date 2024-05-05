@@ -6,7 +6,7 @@ router.route('/')
  .get(researchForumController.getResearchForumTeams)
  .post(researchForumController.registerToResearchForumEvent);
 
-router.route('/:studentParticipants')
+router.route('/nameSchool')
  .get(researchForumController.getSingleResearchForumTeam);
 
 module.exports = router;

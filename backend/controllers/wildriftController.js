@@ -5,37 +5,40 @@ const Wildrift = require('../models/Wildrift');
 class WildriftController {
   // CREATE
   static registerToWildriftEvent = asyncHandler(async (req, res) => {
-    const { teamName, participants, studentEmail } = req.body;
+    const { teamName, members } = req.body;
 
-    if (!teamName ||!Array.isArray(participants) ||!participants.length ||!studentEmail) {
+    if (!teamName ||!members) {
       return res.status(400).json({ message: 'All fields required' });
     }
 
-    const validStudentEmail = await Members.findOne({ student_email: studentEmail.toLowerCase() }).lean().exec();
 
-    if (!validStudentEmail) {
-      return res.status(400).json({ message: 'Not a valid student email' });
+    const memberEmails = new Set();
+    for (const member of members) {
+        if (memberEmails.has(member.email)) {
+            return res.status(400).json({ message: 'Duplicate emails found in team members.' });
+        }
+        memberEmails.add(member.email);
     }
 
-    const duplicate = await Wildrift.findOne({ 'members.email': studentEmail.toLowerCase() }).lean().exec();
+    for (const member of members) {
+        const student = await Members.findOne({ student_email: member.email }).lean().exec();
+        if (!student) {
+            return res.status(400).json({ message: `Student with email ${member.email} not found.` });
+        }
+    }
+
+    const duplicate = await Wildrift.findOne({ teamName }).lean().exec();
 
     if (duplicate) {
       return res.status(409).json({ message: 'Team already registered.' });
     }
 
-    const validatedParticipants = participants.map((participant) => {
-      // Perform validation on each participant object if needed
-      // (e.g., ensure required fields are present)
-      return participant;
-    });
 
-    if (validatedParticipants.length!== 5) {
-      return res.status(400).json({ message: 'A team must have exactly 5 members' });
-    }
+
 
     const wildriftEntryObject = {
       teamName,
-      members: validatedParticipants
+      members
     };
 
     try {
@@ -47,7 +50,7 @@ class WildriftController {
   });
 
   static getSingleWildriftTeam = asyncHandler(async (req, res) => {
-    const teamName = req.params.teamName;
+    const {teamName} = req.body;
 
     if (!teamName) {
       return res.status(400).json({ message: 'Team name is required' });

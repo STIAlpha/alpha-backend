@@ -6,7 +6,7 @@ router.route('/')
  .get(ideathonController.getIdeathonTeams)
  .post(ideathonController.registerToIdeathonEvent)
 
-router.route('/:teamName')
+router.route('/teamName')
  .get(ideathonController.getSingleIdeathonTeam)
 
 

@@ -1,12 +1,14 @@
 const mongoose = require('mongoose');
 
+const Student = new mongoose.Schema({
+  name: { type: String, required: true },
+  coursesAndSections: { type: String, required: true },
+  email: { type: String, required: true },
+
+});
 const beyondthelensSchema = new mongoose.Schema({
   teamName: { type: String, required: true, unique: true }, 
-  studentEmail: { type: String, required: true },
-  members: [{
-    name: { type: String, required: true }, 
-    yearAndSection: { type: String }
-  }]
+  members: {type:[Student],required: true}
 });
 
 

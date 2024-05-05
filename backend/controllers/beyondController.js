@@ -4,25 +4,34 @@ const Beyond = require('../models/Beyond');
 class BeyondController {
   // CREATE
   static async registerToBeyondEvent(req, res) {
-    const { teamName, members, studentEmail } = req.body;
+    const { teamName, members } = req.body;
   
-    if (!teamName ||!Array.isArray(members) || members.length < 4 ||!studentEmail) {
+    if (!teamName ||!members) {
       return res.status(400).json({ message: 'All fields required' });
     }
   
     for (const member of members) {
-      if (!member.name ||!member.yearAndSection) {
+      if (!member.name ||!member.coursesAndSections) {
         return res.status(400).json({ message: 'All member fields required' });
       }
     }
   
-    const validStudentEmail = await Members.findOne({ student_email: studentEmail.toLowerCase() }).lean().exec();
-  
-    if (!validStudentEmail) {
-      return res.status(400).json({ message: 'Not a valid student email' });
+    const memberEmails = new Set();
+    for (const member of members) {
+        if (memberEmails.has(member.email)) {
+            return res.status(400).json({ message: 'Duplicate emails found in team members.' });
+        }
+        memberEmails.add(member.email);
     }
-  
-    const duplicate = await Beyond.findOne({ studentEmail }).lean().exec();
+
+    for (const member of members) {
+        const student = await Members.findOne({ student_email: member.email }).lean().exec();
+        if (!student) {
+            return res.status(400).json({ message: `Student with email ${member.email} not found.` });
+        }
+    }
+
+    const duplicate = await Beyond.findOne({ teamName }).lean().exec();
   
     if (duplicate) {
       return res.status(409).json({ message: 'Team already registered.' });
@@ -30,8 +39,7 @@ class BeyondController {
   
     const beyondEntryObject = {
       teamName,
-      studentEmail: studentEmail.toLowerCase(), 
-      members,
+      members
     };
   
     try {
@@ -43,7 +51,7 @@ class BeyondController {
   }
 
   static async getSingleBeyondTeam(req, res) {
-    const teamName = req.params.teamName;
+    const {teamName} = req.body;
 
     if (!teamName) {
       return res.status(400).json({ message: 'Team name is required' });

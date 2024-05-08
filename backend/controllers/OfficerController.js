@@ -2,11 +2,11 @@ const asyncHandler = require('express-async-handler')
 const exceljs = require('exceljs')
 const fs = require('fs')
 const path = require('path')
-const Members = require('../models/Members');
+const Officer = require('../models/officer');
 
-class MembersController {
+class OfficerController {
     // CREATE
-    static addMembersList = asyncHandler(async (req, res) => {
+    static addOfficersList = asyncHandler(async (req, res) => {
     const { file } = req;
 
     if (!file) {
@@ -52,7 +52,7 @@ class MembersController {
 
     try {
       // Map emails to an array of objects with the correct schema field
-      const membersData = names.map((name, index) => ({
+      const officersData = names.map((name, index) => ({
         name: name,
         program: programs[index] || null, // Use index to access corresponding program
         interest: interests[index] || null, // Use index to access corresponding interest
@@ -61,7 +61,7 @@ class MembersController {
     }));
 
     // Insert data into MongoDB
-    await Members.create(membersData);
+    await Officer.create(officersData);
       res.status(200).json({ message: 'Emails added successfully' });
     } catch (error) {
       console.error('Error importing emails:', error);
@@ -71,4 +71,4 @@ class MembersController {
 }
     
     
-    module.exports = MembersController;
+    module.exports = OfficerController;

@@ -1,30 +1,23 @@
-import mongoose from "mongoose";
+const mongoose = require('mongoose')
 
 const officerSchema = new mongoose.Schema(
   {
     name: {
-      type: String,
-      required: true,
-    },
+      type: String    },
     position: {
-      type: String,
-      required: true,
+      type: String
     },
     department: {
-      type: String,
-      required: true,
+      type: String
     },
     section: {
-      type: String,
-      required: true,
+      type: String
     },
     image: {
-      type: String,
-      required: true,
+      type: String
     },
     bio: {
-      type: String,
-      required: true,
+      type: String
     },
     githubLink: {
       type: String,
@@ -33,8 +26,7 @@ const officerSchema = new mongoose.Schema(
       type: String,
     },
     email: {
-      type: String,
-      required: true,
+      type: String
     },
   },
   { timestamps: true }
@@ -42,4 +34,4 @@ const officerSchema = new mongoose.Schema(
 
 const Officer =
   mongoose.models.Officer || mongoose.model("Officer", officerSchema);
-export default Officer;
+  module.exports = Officer;

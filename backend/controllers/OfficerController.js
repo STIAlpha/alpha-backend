@@ -5,8 +5,8 @@ const path = require('path')
 const Officer = require('../models/officer');
 
 class OfficerController {
-    // CREATE
-    static addOfficersList = asyncHandler(async (req, res) => {
+    // CREATEstatic 
+  static addOfficersList = asyncHandler(async (req, res) => {
     const { file } = req;
 
     if (!file) {
@@ -18,53 +18,51 @@ class OfficerController {
 
     const worksheet = workbook.getWorksheet(1); // Assuming the data is in the first worksheet
 
+    const officersData = [];
 
-    const names = [];
-    const programs = [];
-    const interests = [];
-    const numbers = [];
-    const emails = [];
     worksheet.eachRow((row, rowIndex) => {
       if (rowIndex > 1) { // Skip header row
-        const name = row.getCell(7).value; // Assuming email is in the fourth column (D)
-        const program = row.getCell(8).value; // Assuming email is in the fourth column (D)
-        const interest = row.getCell(10).value; // Assuming email is in the fourth column (D)
-        const number = row.getCell(11).value; // Assuming email is in the fourth column (D)
-        const email = row.getCell(4).value; // Assuming email is in the fourth column (D)
+        const name = row.getCell(2).value; // Assuming name is in the second column (B)
+        const department = row.getCell(3).value; // Assuming department is in the third column (C)
+        const position = row.getCell(4).value; // Assuming section is in the fourth column (D)
+        const section = row.getCell(5).value; // Assuming section is in the fourth column (D)
+        const bio2 = row.getCell(6).value; // Assuming bio is in the fifth column (E)
+        let githubLink = null;
+        let fbLink = null;
+        const email = row.getCell(9).value; // Assuming email is in the eighth column (H)
+    
+        // Extract GitHub link
+        const githubCell = row.getCell(7);
+        if (githubCell && githubCell.text) {
+          githubLink = githubCell.text.trim(); // Extract and trim GitHub link
+        }
+    
+        // Extract Facebook link
+        const fbCell = row.getCell(8);
+        if (fbCell && fbCell.text) {
+          fbLink = fbCell.text.trim(); // Extract and trim Facebook link
+        }
+    
         if (name) {
-          names.push(name);
+          officersData.push({
+            name: name,
+            department: department || null,
+            section: section || null,
+            image: null, // Assuming image is not provided in the file
+            bio: bio2, // Assuming bio is in the fifth column (E)
+            githubLink: githubLink || null,
+            fbLink: fbLink || null,
+            email: email || null
+          });
         }
-        if (program) {
-          programs.push(program);
-        }
-        if (interest) {
-          interests.push(interest);
-        }
-        if (number) {
-          numbers.push(number);
-        }
-        if (email) {
-          emails.push(email);
-        }
-        
       }
     });
-
     try {
-      // Map emails to an array of objects with the correct schema field
-      const officersData = names.map((name, index) => ({
-        name: name,
-        program: programs[index] || null, // Use index to access corresponding program
-        interest: interests[index] || null, // Use index to access corresponding interest
-        number: numbers[index] || null, // Use index to access corresponding number
-        student_email: emails[index] // No need for a ternary operator here
-    }));
-
-    // Insert data into MongoDB
-    await Officer.create(officersData);
-      res.status(200).json({ message: 'Emails added successfully' });
+      // Insert data into MongoDB
+      await Officer.create(officersData);
+      res.status(200).json({ message: 'Officers added successfully' });
     } catch (error) {
-      console.error('Error importing emails:', error);
+      console.error('Error importing officers:', error);
       res.status(500).json({ message: 'Internal server error' });
     }
   });

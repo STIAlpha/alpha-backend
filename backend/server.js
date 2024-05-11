@@ -61,6 +61,9 @@ app.use('/codm', require('./routes/codmRoutes'))
 app.use('/wildrift', require('./routes/wildriftRoutes'))
 app.use('/gamejam', require('./routes/gameJamRoutes'))
 
+app.use(express.json());
+app.use('/officers', require('./routes/officerRoutes'));
+
 app.all('*', (req, res) => {
     res.status(404)
     if (req.accepts('html')) {

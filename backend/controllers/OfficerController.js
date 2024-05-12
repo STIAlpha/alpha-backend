@@ -66,7 +66,85 @@ class OfficerController {
       res.status(500).json({ message: 'Internal server error' });
     }
   });
+
+  static getOfficerById = asyncHandler(async (req, res) =>  {
+    const {id} = req.body;
+    const officer = await Officer.findById(id);
+    if (!officer) {
+      return res.status(404).json({ message: 'Officer not found' });
+    }
+    return res.json(officer);
+  })
+
+  static updateOfficer = asyncHandler(async (req, res) => {
+    const {id} = req.body;
+    const {
+      name,
+      position,
+      department,
+      section,
+      image,
+      bio,
+      githubLink,
+      fbLink,
+      email,
+    } = req.body;
+    const officer = await Officer.findByIdAndUpdate(id, {
+      name,
+      position,
+      department,
+      section,
+      image,
+      bio,
+      githubLink,
+      fbLink,
+      email,
+    });
+    if (!officer) {
+      return res.status(404).json({ message: 'Officer not found' });
+    }
+    return res.json({ message: 'Officer updated successfully' });
+  })
+
+  static getOfficers = asyncHandler(async (req, res) =>  {
+    const officers = await Officer.find();
+    return res.json(officers);
+  })
+
+  static createOfficer = asyncHandler(async (req, res) =>  {
+    const {
+      name,
+      position,
+      department,
+      section,
+      image,
+      bio,
+      githubLink,
+      fbLink,
+      email,
+    } = req.body;
+    const officer = await Officer.create({
+      name,
+      position,
+      department,
+      section,
+      image,
+      bio,
+      githubLink,
+      fbLink,
+      email,
+    });
+    return res.json({ message: 'Officer created successfully' });
+  })
+
+  static deleteOfficer = asyncHandler(async (req, res) =>  {
+    const {id} = req.body;
+    const officer = await Officer.findByIdAndDelete(id);
+    if (!officer) {
+      return res.status(404).json({ message: 'Officer not found' });
+    }
+    return res.json({ message: 'Officer deleted successfully' });
+  })
 }
-    
-    
-    module.exports = OfficerController;
+
+module.exports = OfficerController;

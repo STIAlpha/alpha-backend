@@ -11,5 +11,9 @@ const imageProcessing = require('../utils/imageProcessing')
 router.route('/')
     .post(/*verifyRoles(ROLES_LIST.Admin), */ uploads.single('fileUpload'), officersController.addOfficersList);
 
-    
+    router.get('/byid', officersController.getOfficerById);
+    router.put('/update', officersController.updateOfficer);
+    router.get('/all', officersController.getOfficers);
+    router.post('/create', officersController.createOfficer);
+    router.delete('/delete', officersController.deleteOfficer);
 module.exports = router;

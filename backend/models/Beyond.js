@@ -8,7 +8,9 @@ const Student = new mongoose.Schema({
 });
 const beyondthelensSchema = new mongoose.Schema({
   teamName: { type: String, required: true, unique: true }, 
-  members: {type:[Student],required: true}
+  members: {type:[Student],required: true},
+  representativeEmail:{ type: String, required: true },
+
 });
 
 

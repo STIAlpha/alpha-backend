@@ -4,35 +4,47 @@ const Beyond = require('../models/Beyond');
 class BeyondController {
   // CREATE
   static async registerToBeyondEvent(req, res) {
-    const { teamName, members } = req.body;
+    const { teamName, membersNames, membersCourses, representativeEmail, representativeNum } = req.body;
   
-    if (!teamName ||!members) {
+    if (!teamName || !membersNames || !membersCourses || !representativeEmail || !representativeNum) {
       return res.status(400).json({ message: 'All fields required' });
     }
   
+    const membersNamesArray = membersNames.split(',').map(name => name.trim());
+    const membersCoursesArray = membersCourses.split(',').map(course => course.trim());
+  
+    if (membersNamesArray.length !== membersCoursesArray.length) {
+      return res.status(400).json({ message: 'Members names and courses must have the same number of entries.' });
+    }
+  
+    const members = membersNamesArray.map((name, index) => ({
+      name,
+      coursesAndSections: membersCoursesArray[index],
+      email: representativeEmail 
+    }));
+  
     for (const member of members) {
-      if (!member.name ||!member.coursesAndSections) {
+      if (!member.name || !member.coursesAndSections) {
         return res.status(400).json({ message: 'All member fields required' });
       }
     }
   
     const memberEmails = new Set();
     for (const member of members) {
-        if (memberEmails.has(member.email)) {
-            return res.status(400).json({ message: 'Duplicate emails found in team members.' });
-        }
-        memberEmails.add(member.email);
+      if (memberEmails.has(member.email)) {
+        return res.status(400).json({ message: 'Duplicate emails found in team members.' });
+      }
+      memberEmails.add(member.email);
     }
-
-    for (const member of members) {
-        const student = await Members.findOne({ student_email: member.email }).lean().exec();
-        if (!student) {
-            return res.status(400).json({ message: `Student with email ${member.email} not found.` });
-        }
-    }
-
-    const duplicate = await Beyond.findOne({ teamName }).lean().exec();
   
+    for (const member of members) {
+      const student = await Members.findOne({ student_email: member.email }).lean().exec();
+      if (!student) {
+        return res.status(400).json({ message: `Student with email ${member.email} not found.` });
+      }
+    }
+  
+    const duplicate = await Beyond.findOne({ teamName }).lean().exec();
     if (duplicate) {
       return res.status(409).json({ message: 'Team already registered.' });
     }

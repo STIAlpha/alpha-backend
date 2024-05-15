@@ -14,13 +14,16 @@ class ApplicationDevtController {
       return res.status(400).json({ message: "All fields are required" });
     }
 
+    const membersNamesArray = memberNames.trim().split(',').map(name => name.trim());
+
+
     const duplicate = await Appdev.findOne({ teamName }).lean().exec();
 
-    if (duplicate) {
+    if (duplicate) { 
       return res.status(409).json({ message: "Team already registered." });
     }
 
-    const adEventObject = { teamName,members: memberNames, description };
+    const adEventObject = { teamName,members:membersNamesArray, description };
 
     // Create and store new AD event entry
     const adEventEntry = await Appdev.create(adEventObject);

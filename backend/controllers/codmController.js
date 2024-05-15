@@ -5,32 +5,52 @@ const CODMEventEntry = require('../models/codm');
 class CODMController {
   // CREATE
   static registerToCODMEvent = asyncHandler(async (req, res) => {
-    const {
-      teamName,
-      members
-    } = req.body;
+    const {teamName,membersName,membersCourses,membersIGN,membersplayerId,membersRanks,representativeEmail,representativeNumber} = req.body;
 
+    
     if (
      !teamName ||
-     !members
+     !membersName||!membersCourses||!membersIGN||!membersplayerId||!membersRanks||!representativeEmail||!representativeNumber
     ) {
       return res.status(400).json({ message: 'All fields required' });
     }
 
-     const memberEmails = new Set();
-     for (const member of members) {
-         if (memberEmails.has(member.email)) {
-             return res.status(400).json({ message: 'Duplicate emails found in team members.' });
-         }
-         memberEmails.add(member.email);
-     }
+    const membersNamesArray = membersName.split(',').map(name => name.trim());
+    const membersCoursesArray = membersCourses.split(',').map(course => course.trim());
+    const membersIGNArray = membersIGN.split(',').map(ign => ign.trim());
+    const membersID = membersplayerId.split(',').map(ign => ign.trim());
+    const membersRankssArray = membersRanks.split(',').map(ranks => ranks.trim());
+  
+    if (membersNamesArray.length !== membersCoursesArray.length) {
+      return res.status(400).json({ message: 'Members names and courses must have the same number of entries.' });
+    }
+
+    if (membersNamesArray.length !== membersIGNArray.length) {
+      return res.status(400).json({ message: 'Members names and emails must have the same number of entries.' });
+    }
+    if (membersNamesArray.length !== membersRankssArray.length) {
+      return res.status(400).json({ message: 'Members names and emails must have the same number of entries.' });
+    }
+    if (membersNamesArray.length !== membersID.length) {
+      return res.status(400).json({ message: 'Members names and emails must have the same number of entries.' });
+    }
+  
+    //map each string to respective data
+    const members = membersNamesArray.map((name, index) => ({
+      name,
+      coursesAndSections: membersCoursesArray[index],
+      playerId: membersID[index],
+      ign:membersIGNArray[index],
+      currentRanks:membersRankssArray[index]
+    }));
+
+
  
-     for (const member of members) {
-         const student = await Members.findOne({ student_email: member.email }).lean().exec();
+         const student = await Members.findOne({ student_email: representativeEmail }).lean().exec();
          if (!student) {
-             return res.status(400).json({ message: `Student with email ${member.email} not found.` });
+             return res.status(400).json({ message: `Student with email ${representativeEmail} not found.` });
          }
-     }
+     
  
 
     const duplicate = await CODMEventEntry.findOne({ teamName  }).lean().exec();
@@ -42,7 +62,9 @@ class CODMController {
 
     const codmEntryObject = {
       teamName,
-      members
+      members,
+      representativeEmail,
+      representativeNumber
         };
 
     try {

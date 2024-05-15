@@ -5,12 +5,41 @@ const Wildrift = require('../models/Wildrift');
 class WildriftController {
   // CREATE
   static registerToWildriftEvent = asyncHandler(async (req, res) => {
-    const { teamName, members } = req.body;
+    const { teamName, membersNames,membersCourses,membersEmails,membersIGN,membersRanks } = req.body;
 
-    if (!teamName ||!members) {
+    if (!teamName ||!membersNames||!membersCourses||!membersEmails||!membersIGN||!membersRanks ) {
       return res.status(400).json({ message: 'All fields required' });
     }
-
+      
+    //splice or trim comma based data into an array data
+    const membersNamesArray = membersNames.split(',').map(name => name.trim());
+    const membersCoursesArray = membersCourses.split(',').map(course => course.trim());
+    const membersEmailsArray = membersEmails.split(',').map(emails => emails.trim());
+    const membersIGNArray = membersIGN.split(',').map(ign => ign.trim());
+    const membersRankssArray = membersRanks.split(',').map(ranks => ranks.trim());
+  
+    if (membersNamesArray.length !== membersCoursesArray.length) {
+      return res.status(400).json({ message: 'Members names and courses must have the same number of entries.' });
+    }
+    if (membersNamesArray.length !== membersEmailsArray.length) {
+      return res.status(400).json({ message: 'Members names and emails must have the same number of entries.' });
+    }
+    if (membersNamesArray.length !== membersIGNArray.length) {
+      return res.status(400).json({ message: 'Members names and emails must have the same number of entries.' });
+    }
+    if (membersNamesArray.length !== membersRankssArray.length) {
+      return res.status(400).json({ message: 'Members names and emails must have the same number of entries.' });
+    }
+  
+    //map each string to respective data
+    const members = membersNamesArray.map((name, index) => ({
+      name,
+      coursesAndSections: membersCoursesArray[index],
+      email: membersEmailsArray[index],
+      ign:membersIGNArray[index],
+      currentRank:membersRankssArray[index]
+    }));
+  
 
     const memberEmails = new Set();
     for (const member of members) {

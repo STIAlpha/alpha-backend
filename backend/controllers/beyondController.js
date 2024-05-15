@@ -4,54 +4,41 @@ const Beyond = require('../models/Beyond');
 class BeyondController {
   // CREATE
   static async registerToBeyondEvent(req, res) {
-    const { teamName, membersNames, membersCourses, representativeEmail, representativeNum } = req.body;
+    const { teamName, membersNames, membersCourses, representativeEmail } = req.body;
   
-    if (!teamName || !membersNames || !membersCourses || !memberemails|| !representativeEmail ) {
+    if (!teamName || !membersNames || !membersCourses || !representativeEmail ) {
       return res.status(400).json({ message: 'All fields required' });
     }
   
     //splice or trim comma based data into an array data
     const membersNamesArray = membersNames.split(',').map(name => name.trim());
     const membersCoursesArray = membersCourses.split(',').map(course => course.trim());
-    const membersEmailsArray = membersCourses.split(',').map(course => course.trim());
   
     if (membersNamesArray.length !== membersCoursesArray.length) {
       return res.status(400).json({ message: 'Members names and courses must have the same number of entries.' });
     }
-    if (membersNamesArray.length !== membersEmailsArray.length) {
-      return res.status(400).json({ message: 'Members names and emails must have the same number of entries.' });
-    }
-  
+
     //map each string to respective data
     const members = membersNamesArray.map((name, index) => ({
       name,
-      coursesAndSections: membersCoursesArray[index],
-      email: membersEmailsArray[index] 
-    }));
+      coursesAndSections: membersCoursesArray[index]
+    })); 
   
     //check if all fields are accomodated
     for (const member of members) {
-      if (!member.name || !member.coursesAndSections|| !member.email) {
+      if (!member.name || !member.coursesAndSections) {
         return res.status(400).json({ message: 'All member fields required' });
       }
     }
     
-    //check if same email exist on the team registrants
-    const memberEmails = new Set();
-    for (const member of members) {
-      if (memberEmails.has(member.email)) {
-        return res.status(400).json({ message: 'Duplicate emails found in team members.' });
-      }
-      memberEmails.add(member.email);
-    }
+
     
     //check if emails exist on alpha database
-    for (const member of members) {
-      const student = await Members.findOne({ student_email: member.email }).lean().exec();
+      const student = await Members.findOne({ student_email: representativeEmail }).lean().exec();
       if (!student) {
-        return res.status(400).json({ message: `Student with email ${member.email} not found.` });
+        return res.status(400).json({ message: `Student with email ${representativeEmail} not found.` });
       }
-    }
+    
     
     //check if team name already exists
     const duplicate = await Beyond.findOne({ teamName }).lean().exec();

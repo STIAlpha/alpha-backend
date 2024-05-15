@@ -8,7 +8,7 @@ class MLBBController {
     const { teamName, membersNames,membersCourses,membersEmails,membersIGN,membersID,membersRank,representativemobileNumber,repsresentativeemail } = req.body;
 
 
-    if (!teamName ||!membersNames) {
+    if (!teamName ||!membersNames||!membersCourses||!membersEmails||!membersIGN||!membersID||!membersRank||!representativemobileNumber||!repsresentativeemail) {
       return res.status(400).json({ message: 'All fields required' });
     }
     const membersNamesArray = membersNames.split(',').map(name => name.trim());

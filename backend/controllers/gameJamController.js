@@ -8,33 +8,42 @@ class GameJamController {
     const {
       teamName,
       teamRepEmail,
-      members,
+      membersNames,membersCourses,
       themeVote,
     } = req.body;
 
     if (
      !teamName ||
      !teamRepEmail ||
-     !members ||
+     !membersNames ||!membersCourses||
      !themeVote
     ) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
-    const memberEmails = new Set();
-     for (const member of members) {
-         if (memberEmails.has(member.email)) {
-             return res.status(400).json({ message: 'Duplicate emails found in team members.' });
-         }
-         memberEmails.add(member.email);
-     }
+
+
+    const membersNamesArray = membersNames.split(',').map(name => name.trim());
+    const membersCoursesArray = membersCourses.split(',').map(course => course.trim());
+
+    if (membersNamesArray.length !== membersCoursesArray.length) {
+      return res.status(400).json({ message: 'Members names and courses must have the same number of entries.' });
+    }
+
+    //map each string to respective data
+    const members = membersNamesArray.map((name, index) => ({
+      name,
+      coursesAndSections: membersCoursesArray[index],
+    }));
+
+
+
  
-     for (const member of members) {
-         const student = await Members.findOne({ student_email: member.email }).lean().exec();
-         if (!student) {
-             return res.status(400).json({ message: `Student with email ${member.email} not found.` });
-         }
-     }
+    const student = await Members.findOne({ student_email: teamRepEmail }).lean().exec();
+    if (!student) {
+        return res.status(400).json({ message: `Student with email ${teamRepEmail} not found.` });
+    }
+     
 
     const validTeam = await GameJam.findOne({ teamName}).lean().exec();
 

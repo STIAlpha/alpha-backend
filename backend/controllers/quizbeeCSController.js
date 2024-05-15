@@ -5,36 +5,67 @@ const CSQuizbee = require('../models/QuizBeeCS');
 class CSquizbeeController {
     // CREATE
     static registerToCSquizbeeEvent = asyncHandler(async (req, res) => {
-        const { Name, YearAndSection, STIstudentEmail } = req.body;
+        const {
+            teamName,
+            representativeEmail,
+            membersNames,membersCourses,
+          } = req.body;
+      
+          if (
+           !teamName ||
+           !representativeEmail ||
+           !membersNames ||!membersCourses
+          ) {
+            return res.status(400).json({ message: "All fields are required" });
+          }
+      
+      
+      
+          const membersNamesArray = membersNames.split(',').map(name => name.trim());
+          const membersCoursesArray = membersCourses.split(',').map(course => course.trim());
+      
+          if (membersNamesArray.length !== membersCoursesArray.length) {
+            return res.status(400).json({ message: 'Members names and courses must have the same number of entries.' });
+          }
+      
+          //map each string to respective data
+          const members = membersNamesArray.map((name, index) => ({
+            name,
+            coursesAndSections: membersCoursesArray[index],
+          }));
 
-        if (!Name || !YearAndSection || !STIstudentEmail) {
-            return res.status(400).json({ message: 'All fields required' });
+          
+
+
+        const student = await Members.findOne({ student_email: representativeEmail }).lean().exec();
+        if (!student) {
+            return res.status(400).json({ message: `Student with email ${representativeEmail} not found.` });
         }
+    
 
-        const validStudentEmail = await Members.findOne({ student_email: STIstudentEmail }).lean()
+    const duplicate = await CSQuizbee.findOne({ teamName }).lean().exec();
 
-        if (!validStudentEmail) {
+    if (duplicate) {
+      return res.status(409).json({ message: 'Team already registered.' });
+    }
 
-            return res.status(400).json({ message: 'Not a valid student email' })
-        }
-
-        const duplicate = await CSQuizbee.findOne({ Name }).lean();
-
-        if (duplicate) {
-            return res.status(409).json({ message: 'Student already registered.' });
-        }
-
-        const CSquizbeeEntryObject = { Name, YearAndSection, STIstudentEmail }
-
-        // Create and store new chess entry
-        const CSquizbeeEntry = await CSQuizbee.create(CSquizbeeEntryObject)
-
-        if (CSquizbeeEntry) {
-            return res.status(200).json({ message: 'Student has been successfully registered!' })
-        } else {
-            return res.status(400).json({ message: 'Invalid data received' })
-        }
-    });
+      
+          const QBCS = {
+            teamName,
+            representativeEmail,
+            members,
+          };
+      
+          try {
+            const QBCSentry = await CSQuizbee.create(QBCS);
+            res.status(201).json({
+              message: "Team has been successfully registered!",
+              data: QBCSentry,
+            });
+          } catch (error) {
+            res.status(400).json({ message: "Invalid data received" });
+          }
+        });
 
 
     static getCSquizbeeEntries = asyncHandler(async (req, res) => {

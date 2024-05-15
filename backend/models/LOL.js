@@ -5,8 +5,7 @@ const StudentSchema = new mongoose.Schema({
   coursesAndSections: { type: String, required: true },
   discordName: { type: String, required: true },
   email: { type: String, required: true },
-  ign: { type: String, required: true },
-  currentRanks: { type: String, required: true }
+  tagline: { type: String, required: true },
 });
 
 

@@ -5,11 +5,43 @@ const LeagueOfLegendsModel = require('../models/LOL');
 class LOLController {
   // CREATE
    static registerTeam = asyncHandler(async (req, res) => {
-    const { teamName, members } = req.body;
-
-    if (!teamName || !members) {
-        return res.status(400).json({ message: 'Invalid request. Please provide team name and team members.' });
+    const { teamName, membersNames,membersCourses,membersEmails,membersDC,membersTagline } = req.body;
+    
+    
+    if (!teamName ||!membersNames||!membersCourses||!membersEmails||!membersDC||!membersTagline) {
+      return res.status(400).json({ message: 'All fields required' });
     }
+    const membersNamesArray = membersNames.split(',').map(name => name.trim());
+        const membersCoursesArray = membersCourses.split(',').map(course => course.trim());
+        const membersEmailsArray = membersEmails.split(',').map(emails => emails.trim());
+        const membersDCArray = membersDC.split(',').map(ign => ign.trim());
+        const membersTaglineArray = membersTagline.split(',').map(ign => ign.trim());
+      
+        if (membersNamesArray.length !== membersCoursesArray.length) {
+          return res.status(400).json({ message: 'Members names and courses must have the same number of entries.' });
+        }
+        if (membersNamesArray.length !== membersEmailsArray.length) {
+          return res.status(400).json({ message: 'Members names and emails must have the same number of entries.' });
+        }
+        if (membersNamesArray.length !== membersDCArray.length) {
+          return res.status(400).json({ message: 'Members names and emails must have the same number of entries.' });
+        }
+        if (membersNamesArray.length !== membersTaglineArray.length) {
+          return res.status(400).json({ message: 'Members names and emails must have the same number of entries.' });
+        }
+
+        //map each string to respective data
+        const members = membersNamesArray.map((name, index) => ({
+          name,
+          coursesAndSections: membersCoursesArray[index],
+          email: membersEmailsArray[index],
+          discordName:membersDCArray[index],
+          tagline:membersTagline[index]
+        }));
+
+
+
+
 
     // Check for duplicate emails in members
     const memberEmails = new Set();

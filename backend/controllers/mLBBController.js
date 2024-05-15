@@ -5,11 +5,44 @@ const MobileLegends = require('../models/MLBB');
 class MLBBController {
   // CREATE
   static registerToMLBBEvent = asyncHandler(async (req, res) => {
-    const { teamName, members } = req.body;
+    const { teamName, membersNames,membersCourses,membersEmails,membersIGN,membersID,membersRank,representativemobileNumber,repsresentativeemail } = req.body;
 
-    if (!teamName ||!members) {
+
+    if (!teamName ||!membersNames) {
       return res.status(400).json({ message: 'All fields required' });
     }
+    const membersNamesArray = membersNames.split(',').map(name => name.trim());
+        const membersCoursesArray = membersCourses.split(',').map(course => course.trim());
+        const membersEmailsArray = membersEmails.split(',').map(emails => emails.trim());
+        const membersIGNArray = membersIGN.split(',').map(ign => ign.trim());
+        const membersIDArray = membersID.split(',').map(ign => ign.trim());
+        const membersRanksArray = membersRank.split(',').map(dc => dc.trim());
+      
+        if (membersNamesArray.length !== membersCoursesArray.length) {
+          return res.status(400).json({ message: 'Members names and courses must have the same number of entries.' });
+        }
+        if (membersNamesArray.length !== membersEmailsArray.length) {
+          return res.status(400).json({ message: 'Members names and emails must have the same number of entries.' });
+        }
+        if (membersNamesArray.length !== membersIGNArray.length) {
+          return res.status(400).json({ message: 'Members names and emails must have the same number of entries.' });
+        }
+        if (membersNamesArray.length !== membersIDArray.length) {
+          return res.status(400).json({ message: 'Members names and emails must have the same number of entries.' });
+        }
+        if (membersNamesArray.length !== membersRanksArray.length) {
+          return res.status(400).json({ message: 'Members names and emails must have the same number of entries.' });
+        }
+      
+        //map each string to respective data
+        const members = membersNamesArray.map((name, index) => ({
+          name,
+          coursesAndSections: membersCoursesArray[index],
+          email: membersEmailsArray[index],
+          ign:membersIGNArray[index],
+          playerId:membersIDArray[index],
+          currentMLBBRanks:membersRanksArray[index]
+        }));
 
     const memberEmails = new Set();
      for (const member of members) {
@@ -35,7 +68,8 @@ class MLBBController {
 
     const mLBBEntryObject = {
       teamName,
-      members
+      members,
+      representativemobileNumber,repsresentativeemail
     };
 
     try {

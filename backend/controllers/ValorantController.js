@@ -1,24 +1,73 @@
 const asyncHandler = require('express-async-handler');
 const Valorant = require('../models/Valorant');
+const Members = require('../models/Members');
 
 class ValorantController {
     // CREATE
     static registerToValorantEvent = asyncHandler(async (req, res) => {
-        const { teamName, members } = req.body;
+        const { teamName, membersNames,membersCourses,membersEmails,membersIGN,membersDC,coachname } = req.body;
 
-        if (!teamName || !members) {
+
+        if (!teamName || !membersNames|| !membersCourses|| !membersEmails||!membersIGN|| !membersDC) {
             return res.status(400).json({ message: 'All fields except Coach Name are required.' });
         }
+
+        const membersNamesArray = membersNames.split(',').map(name => name.trim());
+        const membersCoursesArray = membersCourses.split(',').map(course => course.trim());
+        const membersEmailsArray = membersEmails.split(',').map(emails => emails.trim());
+        const membersIGNArray = membersIGN.split(',').map(ign => ign.trim());
+        const membersDCsArray = membersDC.split(',').map(dc => dc.trim());
+      
+        if (membersNamesArray.length !== membersCoursesArray.length) {
+          return res.status(400).json({ message: 'Members names and courses must have the same number of entries.' });
+        }
+        if (membersNamesArray.length !== membersEmailsArray.length) {
+          return res.status(400).json({ message: 'Members names and emails must have the same number of entries.' });
+        }
+        if (membersNamesArray.length !== membersIGNArray.length) {
+          return res.status(400).json({ message: 'Members names and emails must have the same number of entries.' });
+        }
+        if (membersNamesArray.length !== membersDCsArray.length) {
+          return res.status(400).json({ message: 'Members names and emails must have the same number of entries.' });
+        }
+      
+        //map each string to respective data
+        const members = membersNamesArray.map((name, index) => ({
+          name,
+          coursesAndSections: membersCoursesArray[index],
+          email: membersEmailsArray[index],
+          ign:membersIGNArray[index],
+          discordusername:membersDCsArray[index]
+        }));
+      
+    
+        const memberEmails = new Set();
+        for (const member of members) {
+            if (memberEmails.has(member.email)) {
+                return res.status(400).json({ message: 'Duplicate emails found in team members.' });
+            }
+            memberEmails.add(member.email);
+        }
+    
+        for (const member of members) {
+            const student = await Members.findOne({ student_email: member.email }).lean().exec();
+            if (!student) {
+                return res.status(400).json({ message: `Student with email ${member.email} not found.` });
+            }
+        }
+    
         
         const valoteam = await Valorant.findOne({ teamName }).lean().exec();
         if (valoteam) {
             return res.status(404).json({ message: 'Team already registered' });
         }
 
+        
         // Create and store new Valorant entry
         const valorantEntryObject = {
             teamName,
-            members
+            members,
+            coachname
         };
 
         const valorantEntry = await Valorant.create(valorantEntryObject);

@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const Student= new mongoose.Schema({
-    Name: { type: String, required: true },
+    name: { type: String, required: true },
     coursesAndSections: { type: String, required: true },
     githubProfiles: { type: String, required: true },
     

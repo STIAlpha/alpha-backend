@@ -1,19 +1,47 @@
 const asyncHandler = require('express-async-handler');
 const WebDevEntry = require('../models/webdev');
+const Members = require('../models/Members');
 
 class WebDevController {
     // CREATE
-    static registerToWebDevEvent = asyncHandler(async (req, res) => {
-        const { teamName, members, teamRepEmail } = req.body;
+static registerToWebDevEvent = asyncHandler(async (req, res) => {
+    const { teamName, membersNames,membersCourses,membersgithubProfiles, teamRepEmail } = req.body;
 
-        if (!teamName || !members || !teamRepEmail) {
-            return res.status(400).json({ message: 'All fields required' });
-        }
+
+
+    if (!teamName || !membersNames||!membersCourses||!membersgithubProfiles||! teamRepEmail ) {
+        return res.status(400).json({ message: 'All fields required' });
+    }
+
+    const membersNamesArray = membersNames.split(',').map(name => name.trim());
+    const membersCoursesArray = membersCourses.split(',').map(course => course.trim());
+    const membersgithubArray = membersgithubProfiles.split(',').map(course => course.trim());
+  
+    if (membersNamesArray.length !== membersCoursesArray.length) {
+        return res.status(400).json({ message: 'Members names and courses must have the same number of entries.' });
+      }
+      if (membersNamesArray.length !== membersgithubArray.length) {
+        return res.status(400).json({ message: 'Members names and courses must have the same number of entries.' });
+      }
+    
+    //map each string to respective data
+    const members = membersNamesArray.map((name, index) => ({
+      name,
+      coursesAndSections: membersCoursesArray[index],
+      githubProfiles:membersgithubArray[index]
+    })); 
+
+
         const webDevTeam = await WebDevEntry.findOne({ teamName }).lean().exec();
 
         if (webDevTeam) {
             return res.status(404).json({ message: 'Team already registered' });
         }
+
+    const student = await Members.findOne({ student_email: teamRepEmail }).lean().exec();
+      if (!student) {
+        return res.status(400).json({ message: `Student with email ${teamRepEmail} not found.` });
+      }
 
 
         const webDevEntryObject = {

@@ -1,5 +1,4 @@
 const asyncHandler = require("express-async-handler");
-const Members = require("../models/Members");
 const GameJam = require("../models/GameJam");
 
 class GameJamController {
@@ -35,14 +34,6 @@ class GameJamController {
       name,
       coursesAndSections: membersCoursesArray[index],
     }));
-
-
-
- 
-    const student = await Members.findOne({ student_email: teamRepEmail }).lean().exec();
-    if (!student) {
-        return res.status(400).json({ message: `Student with email ${teamRepEmail} not found.` });
-    }
      
 
     const validTeam = await GameJam.findOne({ teamName}).lean().exec();

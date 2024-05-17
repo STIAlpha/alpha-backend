@@ -1,4 +1,3 @@
-const  Members  = require('../models/Members');
 const  Chibby  = require('../models/Chibby');
 
 class ChibbyController {
@@ -10,11 +9,6 @@ class ChibbyController {
     }
 
     try {
-      const validStudentEmail = await Members.findOne({ student_email: studentEmail.toLowerCase() }).lean().exec();
-
-      if (!validStudentEmail) {
-        return res.status(400).json({ message: 'Not a valid student email' });
-      }
 
       const duplicate = await Chibby.findOne({ studentEmail: studentEmail.toLowerCase() }).lean().exec();
 

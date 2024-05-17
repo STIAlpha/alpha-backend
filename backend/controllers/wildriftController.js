@@ -1,5 +1,4 @@
 const asyncHandler = require('express-async-handler');
-const Members = require('../models/Members');
 const Wildrift = require('../models/Wildrift');
 
 class WildriftController {
@@ -49,12 +48,6 @@ class WildriftController {
         memberEmails.add(member.email);
     }
 
-    for (const member of members) {
-        const student = await Members.findOne({ student_email: member.email }).lean().exec();
-        if (!student) {
-            return res.status(400).json({ message: `Student with email ${member.email} not found.` });
-        }
-    }
 
     const duplicate = await Wildrift.findOne({ teamName }).lean().exec();
 

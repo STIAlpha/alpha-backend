@@ -1,5 +1,4 @@
 const asyncHandler = require('express-async-handler')
-const Members = require('../models/Members');
 const qb = require('../models/QuizBeeIT');
 
 class ITquizbeeController {
@@ -33,14 +32,6 @@ class ITquizbeeController {
             name,
             coursesAndSections: membersCoursesArray[index],
           }));
-
-          
-
-
-        const student = await Members.findOne({ student_email: representativeEmail }).lean().exec();
-        if (!student) {
-            return res.status(400).json({ message: `Student with email ${representativeEmail} not found.` });
-        }
     
 
     const duplicate = await qb.findOne({ teamName }).lean().exec();

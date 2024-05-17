@@ -1,6 +1,5 @@
 const asyncHandler = require('express-async-handler');
 const Valorant = require('../models/Valorant');
-const Members = require('../models/Members');
 
 class ValorantController {
     // CREATE
@@ -48,14 +47,6 @@ class ValorantController {
             }
             memberEmails.add(member.email);
         }
-    
-        for (const member of members) {
-            const student = await Members.findOne({ student_email: member.email }).lean().exec();
-            if (!student) {
-                return res.status(400).json({ message: `Student with email ${member.email} not found.` });
-            }
-        }
-    
         
         const valoteam = await Valorant.findOne({ teamName }).lean().exec();
         if (valoteam) {

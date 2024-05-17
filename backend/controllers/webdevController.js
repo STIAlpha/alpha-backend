@@ -1,6 +1,5 @@
 const asyncHandler = require('express-async-handler');
 const WebDevEntry = require('../models/webdev');
-const Members = require('../models/Members');
 
 class WebDevController {
     // CREATE
@@ -38,10 +37,6 @@ static registerToWebDevEvent = asyncHandler(async (req, res) => {
             return res.status(404).json({ message: 'Team already registered' });
         }
 
-    const student = await Members.findOne({ student_email: teamRepEmail }).lean().exec();
-      if (!student) {
-        return res.status(400).json({ message: `Student with email ${teamRepEmail} not found.` });
-      }
 
 
         const webDevEntryObject = {

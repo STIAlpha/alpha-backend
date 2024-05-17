@@ -1,6 +1,5 @@
 const asyncHandler = require('express-async-handler');
 const Tekken = require('../models/Tekken');
-const Members = require('../models/Members');
 
 class TekkenController {
   // CREATE
@@ -11,10 +10,6 @@ class TekkenController {
       return res.status(400).json({ message: 'All fields are required.' });
     }
 
-    const check = await Members.findOne({ stiEmailAddress }).lean().exec();
-        if (!check) {
-            return res.status(404).json({ message: 'No account found' });
-        }
         const check2 = await Tekken.findOne({ stiEmailAddress }).lean().exec();
         if (check2) {
             return res.status(404).json({ message: 'account already registered' });

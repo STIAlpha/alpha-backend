@@ -1,5 +1,4 @@
 const asyncHandler = require('express-async-handler');
-const Members = require('../models/Members');
 const MobileLegends = require('../models/MLBB');
 
 class MLBBController {
@@ -44,6 +43,7 @@ class MLBBController {
           currentMLBBRanks:membersRanksArray[index]
         }));
 
+
     // const memberEmails = new Set();
     //  for (const member of members) {
     //      if (memberEmails.has(member.email)) {
@@ -59,6 +59,7 @@ class MLBBController {
     //          return res.status(400).json({ message: `Student with email ${member.email} not found.` });
     //      }
     //  }
+
  
     const duplicate = await MobileLegends.findOne({ teamName }).lean().exec();
 

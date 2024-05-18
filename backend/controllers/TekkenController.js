@@ -1,6 +1,5 @@
 const asyncHandler = require('express-async-handler');
 const Tekken = require('../models/Tekken');
-const Members = require('../models/Members');
 
 class TekkenController {
   // CREATE
@@ -10,6 +9,7 @@ class TekkenController {
     if (!fullName || !yearAndSection || !stiEmailAddress || !discordUsername) {
       return res.status(400).json({ message: 'All fields are required.' });
     }
+
 
     const check = await Members.findOne({ student_email: stiEmailAddress }).lean().exec();
         if (!check) {

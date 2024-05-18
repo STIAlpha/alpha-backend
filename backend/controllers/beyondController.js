@@ -1,4 +1,3 @@
-const Members = require('../models/Members');
 const Beyond = require('../models/Beyond');
 
 class BeyondController {
@@ -30,14 +29,6 @@ class BeyondController {
         return res.status(400).json({ message: 'All member fields required' });
       }
     }
-    
-
-    
-    //check if emails exist on alpha database
-      const student = await Members.findOne({ student_email: representativeEmail }).lean().exec();
-      if (!student) {
-        return res.status(400).json({ message: `Student with email ${representativeEmail} not found.` });
-      }
     
     
     //check if team name already exists

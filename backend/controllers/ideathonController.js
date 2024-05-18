@@ -1,4 +1,3 @@
-const Members = require('../models/Members');
 const Ideathon = require('../models/Ideathon');
 
 class IdeathonController {
@@ -20,25 +19,11 @@ class IdeathonController {
         memberEmails.add(member.email);
     }
 
-    // Check if each member exists in the database
-    for (const member of members) {
-        const student = await Members.findOne({ student_email: member.email }).lean().exec();
-        if (!student) {
-            return res.status(400).json({ message: `Student with email ${member.email} not found.` });
-        }
-    }
-
 
     const validTeam= await Ideathon.findOne({ teamName }).lean().exec();
 
     if (validTeam) {
       return res.status(400).json({ message: 'Not a valid team name' });
-    }
-
-    const duplicate = await Members.findOne({student_email: teamRepresentativeEmailAddress }).lean().exec();
-
-    if (!duplicate) {
-      return res.status(409).json({ message: 'Email not registered.' });
     }
 
     const ideathonEntryObject = {

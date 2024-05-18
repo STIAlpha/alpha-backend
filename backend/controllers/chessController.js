@@ -1,6 +1,5 @@
 const asyncHandler = require('express-async-handler')
 
-const Members = require('../models/Members');
 const Chess = require('../models/Chess');
 
 class ChessController {
@@ -10,13 +9,6 @@ class ChessController {
 
     if (!studentName || !courseAndSection || !student_email || !mobileNumber) {
       return res.status(400).json({ message: 'All fields required' });
-    }
-
-    const validStudentEmail = await Members.findOne({student_email}).lean().exec()
-
-    if(!validStudentEmail) {
-        
-        return res.status(400).json({message: 'Not a valid student email'})
     }
 
     const duplicate = await Chess.findOne({ studentName }).lean().exec();

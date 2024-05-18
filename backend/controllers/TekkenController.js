@@ -10,7 +10,12 @@ class TekkenController {
       return res.status(400).json({ message: 'All fields are required.' });
     }
 
-        const check2 = await Tekken.findOne({ stiEmailAddress }).lean().exec();
+
+    const check = await Members.findOne({ student_email: stiEmailAddress }).lean().exec();
+        if (!check) {
+            return res.status(404).json({ message: 'No account found' });
+        }
+        const check2 = await Tekken.findOne({ student_email: stiEmailAddress }).lean().exec();
         if (check2) {
             return res.status(404).json({ message: 'account already registered' });
         }

@@ -21,9 +21,9 @@ class MLBBController {
         if (membersNamesArray.length !== membersCoursesArray.length) {
           return res.status(400).json({ message: 'Members names and courses must have the same number of entries.' });
         }
-        if (membersNamesArray.length !== membersEmailsArray.length) {
-          return res.status(400).json({ message: 'Members names and emails must have the same number of entries.' });
-        }
+        // if (membersNamesArray.length !== membersEmailsArray.length) {
+        //   return res.status(400).json({ message: 'Members names and emails must have the same number of entries.' });
+        // }
         if (membersNamesArray.length !== membersIGNArray.length) {
           return res.status(400).json({ message: 'Members names and emails must have the same number of entries.' });
         }
@@ -44,21 +44,21 @@ class MLBBController {
           currentMLBBRanks:membersRanksArray[index]
         }));
 
-    const memberEmails = new Set();
-     for (const member of members) {
-         if (memberEmails.has(member.email)) {
-             return res.status(400).json({ message: 'Duplicate emails found in team members.' });
-         }
-         memberEmails.add(member.email);
-     }
+    // const memberEmails = new Set();
+    //  for (const member of members) {
+    //      if (memberEmails.has(member.email)) {
+    //          return res.status(400).json({ message: 'Duplicate emails found in team members.' });
+    //      }
+    //      memberEmails.add(member.email);
+    //  }
  
      // Check if each member exists in the database
-     for (const member of members) {
-         const student = await Members.findOne({ student_email: member.email }).lean().exec();
-         if (!student) {
-             return res.status(400).json({ message: `Student with email ${member.email} not found.` });
-         }
-     }
+    //  for (const member of members) {
+    //      const student = await Members.findOne({ student_email: member.email }).lean().exec();
+    //      if (!student) {
+    //          return res.status(400).json({ message: `Student with email ${member.email} not found.` });
+    //      }
+    //  }
  
     const duplicate = await MobileLegends.findOne({ teamName }).lean().exec();
 

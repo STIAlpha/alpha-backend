@@ -11,14 +11,14 @@ class TekkenController {
     }
 
 
-    const check = await Members.findOne({ student_email: stiEmailAddress }).lean().exec();
-        if (!check) {
-            return res.status(404).json({ message: 'No account found' });
-        }
-        const check2 = await Tekken.findOne({ student_email: stiEmailAddress }).lean().exec();
-        if (check2) {
-            return res.status(404).json({ message: 'account already registered' });
-        }
+    // const check = await Members.findOne({ student_email: stiEmailAddress }).lean().exec();
+    //     if (!check) {
+    //         return res.status(404).json({ message: 'No account found' });
+    //     }
+    //     const check2 = await Tekken.findOne({ student_email: stiEmailAddress }).lean().exec();
+    //     if (check2) {
+    //         return res.status(404).json({ message: 'account already registered' });
+    //     }
 
     try {
       const tekkenEntry = await Tekken.create({ fullName, yearAndSection, stiEmailAddress, discordUsername });

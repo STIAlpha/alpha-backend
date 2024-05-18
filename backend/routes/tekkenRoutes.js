@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-const TekkenController = require('../controllers/tekkenController')
+const TekkenController = require('../controllers/TekkenController')
 
 router.route('/').get(TekkenController.getTekkenEntries);
  router.route('/').post(TekkenController.registerToTekkenEvent);

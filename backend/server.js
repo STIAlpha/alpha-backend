@@ -93,3 +93,9 @@ mongoose.connection.on('error', err => {
     console.log(err)
     logEvents(`${err.no}: ${err.code}\t${err.syscall}\t${err.hostname}`, 'mongoErrLog.log')
 })
+
+module.exports = (req, res) => {
+  res.status(200).json({ message: 'Hello from Vercel!' });
+};
+
+

@@ -1,5 +1,5 @@
 const allowedOrigins = [
-    'https://alpha-backend-api.netlify.app',
+    'https://alpha-frontend-v2.vercel.app',
     'http://localhost:3000',
     'http://localhost:3500',
     'https://www.dandrepairshop.com',

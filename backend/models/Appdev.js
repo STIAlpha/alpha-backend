@@ -21,6 +21,6 @@ const appDevSchema = new mongoose.Schema({
 });
 
 // Create the model for the application development event
-const ApplicationDev = mongoose.model("Application Development", appDevSchema);
+const ApplicationDev = mongoose.model("AppDevelopment", appDevSchema);
 
 module.exports = ApplicationDev;

@@ -35,32 +35,21 @@ app.get('/get-upload', (req, res) => {
   });
 app.use('/uploads', express.static('uploads'))
 app.use('/', require('./routes/root'))
-app.use('/users', require('./routes/userRoutes'))
 app.use('/auth', require('./routes/authRoutes'))
-app.use('/members', require('./routes/membersRoutes'))
-app.use('/officers', require('./routes/OfficersRoutes'))
-app.use('/events', require('./routes/eventRoutes'))
-app.use('/notes', require('./routes/noteRoutes'))
-app.use('/attendance', require('./routes/attendanceRoutes'))
+
 
 app.use('/chess', require('./routes/chessRoutes'))
-app.use('/ITQuizBee', require('./routes/ITquizbeeRoutes'))
-app.use('/CSQuizBee', require('./routes/CSquizbeeRoutes'))
-
 app.use('/appdev', require('./routes/applicationDevRoutes'))
 app.use('/webdev', require('./routes/webdevRoutes'))
 app.use('/lol', require('./routes/lolRoutes'))
 app.use('/valorant', require('./routes/valorantRoutes'))
 app.use('/tekken', require('./routes/tekkenRoutes'))
-
-app.use('/researchforum', require('./routes/researchForumRoutes'))
-app.use('/ideathon', require('./routes/ideathonRoutes'))
-app.use('/chibby', require('./routes/chibbyRoutes'))
 app.use('/beyond', require('./routes/beyondRoutes'))
 app.use('/mlbb', require('./routes/mLBBRoutes'))
 app.use('/codm', require('./routes/codmRoutes'))
 app.use('/wildrift', require('./routes/wildriftRoutes'))
 app.use('/gamejam', require('./routes/gameJamRoutes'))
+app.use('/participants', require('./routes/participantsRoutes'))
 
 app.use(express.json());
 

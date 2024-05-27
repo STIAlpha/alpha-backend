@@ -14,6 +14,6 @@ const webDevSchema = new mongoose.Schema({
 });
 
 // Create the Website Development Competition entry model
-const WebDevEntry = mongoose.model('WebDevEntry', webDevSchema);
+const WebDevEntry = mongoose.model('WebDevelopment', webDevSchema);
 
 module.exports = WebDevEntry;

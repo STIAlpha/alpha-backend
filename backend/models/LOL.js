@@ -14,6 +14,6 @@ const LeagueOfLegendsSchema = new mongoose.Schema({
   members: [{ type: StudentSchema}]
 });
 
-const LeagueOfLegends = mongoose.model('LeagueOfLegends', LeagueOfLegendsSchema);
+const LeagueOfLegends = mongoose.model('LOLPc', LeagueOfLegendsSchema);
 
 module.exports =  LeagueOfLegends ;

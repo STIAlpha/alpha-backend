@@ -13,6 +13,6 @@ const beyondthelensSchema = new mongoose.Schema({
 });
 
 
-const Beyond = mongoose.model('Beyond', beyondthelensSchema);
+const Beyond = mongoose.model('BeyondTheLens', beyondthelensSchema);
 
 module.exports = Beyond;

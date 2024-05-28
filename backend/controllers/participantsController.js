@@ -27,7 +27,7 @@ class ParticipantsController {
             const lolCount = await LOLPc.countDocuments();
             const webdevCount = await WebDev.countDocuments();
             const chibbyCount = await Chibby.countDocuments();
-            const codmCount = await Codm.countDoucments();
+            const codmCount = await Codm.countDocuments();
     
             const categorizedParticipants = {
                 valorant: valorantCount,

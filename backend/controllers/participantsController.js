@@ -10,7 +10,7 @@ const BeyondTheLens = require('../models/Beyond');
 const LOLPc = require('../models/LOL');
 const WebDev = require('../models/webdev');
 const Chibby = require('../models/Chibby');
-const CODM = require('../models/codm');
+const Codm = require('../models/codm');
 
 
 class ParticipantsController {
@@ -27,7 +27,7 @@ class ParticipantsController {
             const lolCount = await LOLPc.countDocuments();
             const webdevCount = await WebDev.countDocuments();
             const chibbyCount = await Chibby.countDocuments();
-            const codmCount = await CODM.countDoucments();
+            const codmCount = await Codm.countDoucments();
     
             const categorizedParticipants = {
                 valorant: valorantCount,

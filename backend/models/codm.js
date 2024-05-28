@@ -16,6 +16,6 @@ const codmSchema = new mongoose.Schema({
 
 });
 
-const CODMEventEntry = mongoose.model('CODMEventEntry', codmSchema);
+const CODMEventEntry = mongoose.model('CallOfDuty', codmSchema);
 
 module.exports = CODMEventEntry;

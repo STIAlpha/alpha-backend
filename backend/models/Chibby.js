@@ -7,6 +7,6 @@ const chibbySchema = new mongoose.Schema({
   studentEmail: { type: String, required: true, trim: true, unique: true, lowercase: true }
 });
 
-const Chibby = mongoose.model('Chibby', chibbySchema);
+const Chibby = mongoose.model('CharacterMaking', chibbySchema);
 
 module.exports = Chibby;

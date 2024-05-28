@@ -16,5 +16,5 @@ const CSquizBeeSchema = new mongoose.Schema({
 
 
 
-const CSQuizBee = mongoose.model('CSQuizBee', CSquizBeeSchema);
+const CSQuizBee = mongoose.model('Quiz', CSquizBeeSchema);
 module.exports = CSQuizBee;

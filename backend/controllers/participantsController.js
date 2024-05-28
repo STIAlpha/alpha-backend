@@ -11,6 +11,8 @@ const LOLPc = require('../models/LOL');
 const WebDev = require('../models/webdev');
 const Chibby = require('../models/Chibby');
 const Codm = require('../models/codm');
+const QuizBee = require('../models/QuizBeeCS');
+const GameDevelopment = require('../models/GameJam');
 
 
 class ParticipantsController {
@@ -28,6 +30,8 @@ class ParticipantsController {
             const webdevCount = await WebDev.countDocuments();
             const chibbyCount = await Chibby.countDocuments();
             const codmCount = await Codm.countDocuments();
+            const quizCount = await QuizBee.countDocuments();
+            const gameDevCount = await GameDevelopment.countDocuments();
     
             const categorizedParticipants = {
                 valorant: valorantCount,
@@ -40,7 +44,9 @@ class ParticipantsController {
                 lolpc: lolCount,
                 webdevelopment: webdevCount,
                 charactermaking: chibbyCount,
-                callofduty: codmCount
+                callofduty: codmCount,
+                quiz: quizCount,
+                gamedevelopment: gameDevCount
             };
     
             res.json(categorizedParticipants);

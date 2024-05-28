@@ -21,6 +21,6 @@ const gameJamSchema = new mongoose.Schema({
   },
 });
 
-const GameJam = mongoose.model("GameJamEvent", gameJamSchema);
+const GameJam = mongoose.model("GameDevelopment", gameJamSchema);
 
 module.exports = GameJam;
